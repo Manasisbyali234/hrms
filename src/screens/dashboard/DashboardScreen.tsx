@@ -1,23 +1,34 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  RefreshControl, Animated, Platform, StatusBar,
+  RefreshControl, Animated, Platform, StatusBar, Dimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Typography, Spacing, Radius, Shadow } from '../../design-system/tokens';
 import { Avatar } from '../../design-system/components/Avatar';
 import { Badge, statusToVariant } from '../../design-system/components/Badge';
-import { Card, KPIWidget, SectionHeader, ProgressBar } from '../../design-system/components/Card';
+import { ProgressBar } from '../../design-system/components/Card';
 import { currentUser, mockTasks, mockProjects, mockNotifications, mockAttendance } from '../../data/mockData';
 
+const { width: SCREEN_W } = Dimensions.get('window');
+const CARD_W = (SCREEN_W - 16 * 2 - 10) / 2;
+
 const QUICK_ACTIONS = [
-  { name: 'time-outline' as const, label: 'Check In', color: Colors.success, route: '/(tabs)/attendance' },
-  { name: 'calendar-outline' as const, label: 'Apply Leave', color: Colors.warning, route: '/leaves/apply' },
-  { name: 'receipt-outline' as const, label: 'Expense', color: Colors.accent, route: '/expenses' },
-  { name: 'checkmark-circle-outline' as const, label: 'My Tasks', color: Colors.primary, route: '/(tabs)/tasks' },
-  { name: 'people-outline' as const, label: 'Directory', color: '#8B5CF6', route: '/employees' },
-  { name: 'chatbubbles-outline' as const, label: 'Chat', color: '#06B6D4', route: '/(tabs)/chat' },
+  { icon: 'time-outline' as const,              label: 'Check In',    color: '#34D399', bg: '#D1FAE5', route: '/(tabs)/attendance' },
+  { icon: 'calendar-outline' as const,          label: 'Apply Leave', color: '#FBBF24', bg: '#FEF3C7', route: '/leaves/apply' },
+  { icon: 'receipt-outline' as const,           label: 'Expense',     color: '#4DA8DA', bg: '#E1F0FA', route: '/expenses' },
+  { icon: 'people-outline' as const,            label: 'Directory',   color: '#56CCF2', bg: '#E8F7FD', route: '/employees' },
+  { icon: 'bar-chart-outline' as const,         label: 'Payroll',     color: '#F87171', bg: '#FEE2E2', route: '/payroll' },
+  { icon: 'chatbubbles-outline' as const,       label: 'Chat',        color: '#2E86B5', bg: '#C8E4F5', route: '/(tabs)/chat' },
+];
+
+const STATS = (pendingTasks: number, activeProjects: number, leaveBalance: number, attendance: string) => [
+  { label: 'Pending Tasks',    value: pendingTasks,    icon: 'list-circle-outline' as const,  color: '#4DA8DA', bg: '#E1F0FA', route: '/(tabs)/tasks' },
+  { label: 'Active Projects',  value: activeProjects,  icon: 'folder-open-outline' as const,  color: '#2E86B5', bg: '#C8E4F5', route: '/projects' },
+  { label: 'Leave Balance',    value: leaveBalance,    icon: 'umbrella-outline' as const,     color: '#34D399', bg: '#D1FAE5', route: '/(tabs)/leaves' },
+  { label: 'Attendance',       value: attendance,      icon: 'pulse-outline' as const,        color: '#FBBF24', bg: '#FEF3C7', route: '/(tabs)/attendance' },
 ];
 
 function useElapsedTimer() {
@@ -32,284 +43,341 @@ function useElapsedTimer() {
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good Morning';
+  if (h < 17) return 'Good Afternoon';
+  return 'Good Evening';
+}
+
 export default function DashboardScreen() {
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
-  const [activeTab, setActiveTab] = useState<'overview' | 'tasks' | 'projects'>('overview');
   const elapsedTime = useElapsedTimer();
-  const scrollY = useRef(new Animated.Value(0)).current;
-
-  const headerHeight = scrollY.interpolate({ inputRange: [0, 100], outputRange: [0, -20], extrapolate: 'clamp' });
+  const scrollViewRef = useRef<ScrollView>(null);
+  const myTasksY = useRef(0);
   const onRefresh = () => { setRefreshing(true); setTimeout(() => setRefreshing(false), 1200); };
   const unreadCount = mockNotifications.filter(n => !n.read).length;
   const today = mockAttendance[0];
+  const pendingTasks = mockTasks.filter(t => t.status !== 'completed').length;
+  const activeProjects = mockProjects.filter(p => p.status === 'active').length;
+  const stats = STATS(pendingTasks, activeProjects, currentUser.leaveBalance.remaining.annual, '96%');
 
   return (
-    <View style={styles.container}>
+    <View style={s.root}>
       <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
 
-      <Animated.View style={[styles.header, { transform: [{ translateY: headerHeight }] }]}>
-        <View style={styles.headerCircle1} />
-        <View style={styles.headerCircle2} />
-        <View style={styles.headerTop}>
-          <View>
-            <Text style={styles.greeting}>Good Morning</Text>
-            <Text style={styles.userName}>{currentUser.name}</Text>
-            <Text style={styles.userRole}>{currentUser.designation}</Text>
+      {/* ── Header ── */}
+      <LinearGradient colors={['#56CCF2', '#4DA8DA', '#2E86B5']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={s.header}>
+        {/* decorative circles */}
+        <View style={s.hCircle1} />
+        <View style={s.hCircle2} />
+        <View style={s.hRow}>
+          <View style={s.hLeft}>
+            <Text style={s.hGreeting}>{getGreeting()} 👋</Text>
+            <Text style={s.hName}>{currentUser.firstName}</Text>
+            <Text style={s.hRole}>{currentUser.designation}</Text>
           </View>
-          <View style={styles.headerActions}>
-            <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/notifications')}>
-              <Ionicons name="notifications-outline" size={24} color={Colors.white} />
+          <View style={s.hRight}>
+            <TouchableOpacity style={s.notifBtn} onPress={() => router.push('/notifications')}>
+              <Ionicons name="notifications-outline" size={22} color="#fff" />
               {unreadCount > 0 && (
-                <View style={styles.badge}><Text style={styles.badgeText}>{unreadCount}</Text></View>
+                <View style={s.notifDot}><Text style={s.notifDotTxt}>{unreadCount}</Text></View>
               )}
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/profile')}>
-              <Avatar name={currentUser.name} initials={currentUser.initials} size={44} />
+            <TouchableOpacity onPress={() => router.push('/profile')} style={s.avatarWrap}>
+              <Avatar name={currentUser.name} initials={currentUser.initials} size={42} />
+              <View style={s.avatarOnline} />
             </TouchableOpacity>
           </View>
         </View>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tabRow}>
-          {(['overview', 'tasks', 'projects'] as const).map(tab => (
-            <TouchableOpacity key={tab} style={[styles.tab, activeTab === tab && styles.tabActive]} onPress={() => setActiveTab(tab)}>
-              <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </Animated.View>
+        {/* Attendance strip inside header */}
+        <View style={s.attStrip}>
+          <View style={s.attSlot}>
+            <Ionicons name="log-in-outline" size={14} color="rgba(255,255,255,0.7)" />
+            <Text style={s.attSlotLabel}>CHECK IN</Text>
+            <Text style={s.attSlotVal}>{today.checkIn}</Text>
+          </View>
+          <View style={s.attDivider} />
+          <View style={s.attSlot}>
+            <Ionicons name="time-outline" size={14} color="rgba(255,255,255,0.7)" />
+            <Text style={s.attSlotLabel}>WORKING</Text>
+            <Text style={s.attSlotVal}>{elapsedTime.slice(0, 5)}</Text>
+          </View>
+          <View style={s.attDivider} />
+          <View style={s.attSlot}>
+            <Ionicons name="log-out-outline" size={14} color="rgba(255,255,255,0.7)" />
+            <Text style={s.attSlotLabel}>CHECK OUT</Text>
+            <Text style={[s.attSlotVal, { color: '#FCD34D' }]}>{today.checkOut}</Text>
+          </View>
+        </View>
+      </LinearGradient>
 
-      <Animated.ScrollView
-        style={styles.scroll} contentContainerStyle={styles.scrollContent}
+      {/* ── Body ── */}
+      <ScrollView
+        ref={scrollViewRef as any}
+        style={s.scroll}
+        contentContainerStyle={s.scrollContent}
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.primary} />}
-        onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: false })}
-        scrollEventThrottle={16}
       >
-        {/* Attendance Card */}
-        <Card elevated style={styles.attendanceCard}>
-          <View style={styles.attendanceHeader}>
-            <View>
-              <Text style={styles.attendanceDayLabel}>THURSDAY, JUN 4</Text>
-              <Text style={styles.attendanceTitle}>Attendance</Text>
-            </View>
-            <Badge label={today.status === 'active' ? 'WORKING' : today.status} variant={statusToVariant[today.status]} dot />
-          </View>
-          <View style={styles.timerSection}>
-            <View style={styles.timerRing}>
-              <Text style={styles.timerLabel}>ELAPSED</Text>
-              <Text style={styles.timerValue}>{elapsedTime.slice(0, 5)}</Text>
-              <Text style={styles.timerSec}>{elapsedTime.slice(-2)}s</Text>
-            </View>
-          </View>
-          <View style={styles.checkInRow}>
-            <View style={styles.checkItem}>
-              <View style={[styles.checkDot, { backgroundColor: Colors.success }]} />
-              <Text style={styles.checkLabel}>CHECK IN</Text>
-              <Text style={styles.checkTime}>{today.checkIn}</Text>
-            </View>
-            <View style={styles.checkDivider} />
-            <View style={styles.checkItem}>
-              <View style={[styles.checkDot, { backgroundColor: Colors.warning }]} />
-              <Text style={styles.checkLabel}>CHECK OUT</Text>
-              <Text style={[styles.checkTime, { color: Colors.warning }]}>{today.checkOut}</Text>
-            </View>
-          </View>
-          <View style={styles.locationRow}>
-            <Ionicons name="location-outline" size={13} color={Colors.gray500} />
-            <Text style={styles.locationTag}> Office Location • Checked In</Text>
-          </View>
-          <TouchableOpacity style={styles.checkOutBtn} onPress={() => router.push('/(tabs)/attendance')}>
-            <Ionicons name="log-out-outline" size={16} color={Colors.danger} />
-            <Text style={styles.checkOutBtnText}>Check Out Now</Text>
-          </TouchableOpacity>
-        </Card>
 
         {/* Quick Actions */}
-        <SectionHeader title="Quick Actions" />
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.quickActions}>
-          {QUICK_ACTIONS.map((action, i) => (
-            <TouchableOpacity key={i} style={styles.quickAction} onPress={() => router.push(action.route as any)} activeOpacity={0.8}>
-              <View style={[styles.quickActionIcon, { backgroundColor: action.color + '18' }]}>
-                <Ionicons name={action.name} size={24} color={action.color} />
+        <Text style={s.sectionTitle}>Quick Actions</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.qaRow}>
+          {QUICK_ACTIONS.map((a, i) => (
+            <TouchableOpacity key={i} style={s.qaItem} onPress={() => router.push(a.route as any)} activeOpacity={0.75}>
+              <View style={[s.qaCircle, { backgroundColor: a.bg }]}>
+                <Ionicons name={a.icon} size={22} color={a.color} />
               </View>
-              <Text style={styles.quickActionLabel}>{action.label}</Text>
+              <Text style={s.qaLabel}>{a.label}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
 
-        {/* KPI Widgets */}
-        <SectionHeader title="Overview" actionLabel="See All" onAction={() => {}} />
-        <View style={styles.kpiRow}>
-          <KPIWidget label="Pending Tasks" value={mockTasks.filter(t => t.status !== 'completed').length}
-            icon={<Ionicons name="list-outline" size={20} color={Colors.primary} />}
-            iconBg={Colors.overlayLight} sub="Due this week" onPress={() => router.push('/(tabs)/tasks')} />
-          <KPIWidget label="Active Projects" value={mockProjects.filter(p => p.status === 'active').length}
-            icon={<Ionicons name="folder-outline" size={20} color={Colors.accent} />}
-            iconBg={Colors.infoLight} sub="In progress" onPress={() => router.push('/projects')} />
-          <KPIWidget label="Leave Balance" value={currentUser.leaveBalance.remaining.annual}
-            icon={<Ionicons name="umbrella-outline" size={20} color={Colors.success} />}
-            iconBg={Colors.successLight} sub="Days left" onPress={() => router.push('/(tabs)/leaves')} />
+        {/* Stats Grid */}
+        <View style={s.sectionRow}>
+          <Text style={s.sectionTitle}>Overview</Text>
+          <TouchableOpacity><Text style={s.seeAll}>See All</Text></TouchableOpacity>
         </View>
-        <View style={styles.kpiRow}>
-          <KPIWidget label="Notifications" value={unreadCount}
-            icon={<Ionicons name="notifications-outline" size={20} color={Colors.warning} />}
-            iconBg={Colors.warningLight} sub="Unread" onPress={() => router.push('/notifications')} />
-          <KPIWidget label="Expense Claims" value="₹5,050"
-            icon={<Ionicons name="wallet-outline" size={20} color={Colors.danger} />}
-            iconBg={Colors.dangerLight} sub="Pending" onPress={() => router.push('/expenses')} />
-          <KPIWidget label="Attendance" value="96%"
-            icon={<Ionicons name="time-outline" size={20} color={Colors.primary} />}
-            iconBg={Colors.overlayLight} sub="This month" onPress={() => router.push('/(tabs)/attendance')} />
+        <View style={s.statsGrid}>
+          {stats.map((item, i) => (
+            <TouchableOpacity key={i} style={[s.statCard, { width: CARD_W }]} onPress={() => router.push(item.route as any)} activeOpacity={0.82}>
+              <View style={[s.statIconBox, { backgroundColor: item.bg }]}>
+                <Ionicons name={item.icon} size={20} color={item.color} />
+              </View>
+              <Text style={s.statValue}>{item.value}</Text>
+              <Text style={s.statLabel} numberOfLines={1}>{item.label}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
 
-        {/* Recent Tasks */}
-        <SectionHeader title="My Tasks" actionLabel="View All" onAction={() => router.push('/(tabs)/tasks')} />
-        {mockTasks.slice(0, 3).map(task => (
-          <Card key={task.id} onPress={() => router.push(`/tasks/${task.id}` as any)}>
-            <View style={styles.taskRow}>
-              <View style={styles.taskLeft}>
-                <Text style={styles.taskTitle} numberOfLines={1}>{task.title}</Text>
-                <Text style={styles.taskProject}>{task.project}</Text>
-                <View style={styles.taskMeta}>
-                  <Badge label={task.priority} variant={task.priority === 'high' ? 'danger' : task.priority === 'medium' ? 'warning' : 'neutral'} />
-                  <View style={styles.taskDueRow}>
-                    <Ionicons name="calendar-outline" size={11} color={Colors.gray400} />
-                    <Text style={styles.taskDue}> {task.dueDate}</Text>
-                  </View>
-                </View>
-              </View>
-              <Badge label={task.status.replace('-', ' ')} variant={statusToVariant[task.status] || 'neutral'} />
+        {/* My Tasks */}
+        <View
+          style={s.sectionRow}
+          onLayout={(e) => { myTasksY.current = e.nativeEvent.layout.y; }}
+        >
+          <Text style={s.sectionTitle}>My Tasks</Text>
+          <TouchableOpacity onPress={() => router.push('/(tabs)/tasks')}><Text style={s.seeAll}>View All</Text></TouchableOpacity>
+        </View>
+        {mockTasks.filter(t => t.status !== 'completed').slice(0, 3).map(task => (
+          <TouchableOpacity key={task.id} style={s.taskCard} onPress={() => router.push(`/tasks/${task.id}` as any)} activeOpacity={0.82}>
+            <View style={s.taskTop}>
+              <View style={[s.taskPriorityDot, {
+                backgroundColor: task.priority === 'high' ? Colors.danger : task.priority === 'medium' ? Colors.warning : Colors.gray400
+              }]} />
+              <Text style={s.taskTitle} numberOfLines={1}>{task.title}</Text>
+              <Badge
+                label={task.status.replace('-', ' ')}
+                variant={statusToVariant[task.status] || 'neutral'}
+                size="sm"
+              />
             </View>
-            {task.progress > 0 && <ProgressBar progress={task.progress} style={{ marginTop: 10 }} color={task.status === 'completed' ? Colors.success : Colors.primary} />}
-          </Card>
+            <Text style={s.taskProject}>{task.project}</Text>
+            {task.progress > 0 && (
+              <View style={s.taskProgressRow}>
+                <ProgressBar
+                  progress={task.progress}
+                  style={{ flex: 1 }}
+                  height={5}
+                  color={Colors.primary}
+                />
+                <Text style={s.taskProgressTxt}>{task.progress}%</Text>
+              </View>
+            )}
+            <View style={s.taskBottom}>
+              <Ionicons name="calendar-outline" size={11} color={Colors.gray400} />
+              <Text style={s.taskDue}> Due {task.dueDate}</Text>
+            </View>
+          </TouchableOpacity>
         ))}
 
         {/* Active Projects */}
-        <SectionHeader title="Active Projects" actionLabel="View All" onAction={() => router.push('/projects')} />
+        <View style={s.sectionRow}>
+          <Text style={s.sectionTitle}>Projects</Text>
+          <TouchableOpacity onPress={() => router.push('/projects')}><Text style={s.seeAll}>View All</Text></TouchableOpacity>
+        </View>
         {mockProjects.filter(p => p.status === 'active').map(project => (
-          <Card key={project.id} onPress={() => router.push(`/projects/${project.id}` as any)}>
-            <View style={styles.projectRow}>
-              <View style={styles.projectInfo}>
-                <Text style={styles.projectName} numberOfLines={1}>{project.name}</Text>
-                <Text style={styles.projectClient}>{project.client}</Text>
+          <TouchableOpacity key={project.id} style={s.projectCard} onPress={() => router.push(`/projects/${project.id}` as any)} activeOpacity={0.82}>
+            <View style={s.projectTop}>
+              <View style={s.projectInfo}>
+                <Text style={s.projectName} numberOfLines={1}>{project.name}</Text>
+                <Text style={s.projectClient}>{project.client}</Text>
               </View>
-              <Text style={styles.projectProgress}>{project.progress}%</Text>
+              <View style={s.projectPctBadge}>
+                <Text style={s.projectPct}>{project.progress}%</Text>
+              </View>
             </View>
-            <ProgressBar progress={project.progress} style={{ marginTop: 8 }}
-              color={project.progress > 75 ? Colors.success : project.progress > 40 ? Colors.primary : Colors.warning} showLabel={false} />
-            <View style={styles.projectFooter}>
-              <View style={styles.projectTasksRow}>
-                <Ionicons name="checkmark-circle-outline" size={13} color={Colors.gray500} />
-                <Text style={styles.projectTasks}> {project.tasksCompleted}/{project.tasksTotal} tasks</Text>
+            <ProgressBar
+              progress={project.progress}
+              style={{ marginTop: 10, marginBottom: 8 }}
+              height={5}
+              color={project.progress > 75 ? Colors.success : project.progress > 40 ? Colors.primary : Colors.warning}
+            />
+            <View style={s.projectBottom}>
+              <View style={s.projectTasksRow}>
+                <Ionicons name="checkmark-done-outline" size={12} color={Colors.gray400} />
+                <Text style={s.projectTasks}> {project.tasksCompleted}/{project.tasksTotal} tasks</Text>
               </View>
-              <View style={styles.teamAvatars}>
+              <View style={s.teamRow}>
                 {project.team.slice(0, 3).map((t, i) => (
-                  <Avatar key={i} initials={t} size={24} style={{ marginLeft: i > 0 ? -8 : 0 }} />
+                  <Avatar key={i} initials={t} size={22} style={{ marginLeft: i > 0 ? -7 : 0 }} />
                 ))}
                 {project.team.length > 3 && (
-                  <View style={styles.moreMembers}><Text style={styles.moreMembersText}>+{project.team.length - 3}</Text></View>
+                  <View style={s.moreMembers}><Text style={s.moreTxt}>+{project.team.length - 3}</Text></View>
                 )}
               </View>
             </View>
-          </Card>
+          </TouchableOpacity>
         ))}
 
         {/* Announcements */}
-        <SectionHeader title="Recent Announcements" actionLabel="View All" onAction={() => router.push('/announcements')} />
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.announcementsRow}>
+        <View style={s.sectionRow}>
+          <Text style={s.sectionTitle}>Announcements</Text>
+          <TouchableOpacity onPress={() => router.push('/announcements')}><Text style={s.seeAll}>View All</Text></TouchableOpacity>
+        </View>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingRight: 16 }}>
           {[
-            { iconName: 'business-outline' as const, title: 'Q2 Town Hall', date: 'Jun 15', color: Colors.primary },
-            { iconName: 'document-text-outline' as const, title: 'New Leave Policy', date: 'Jul 1', color: Colors.accent },
-            { iconName: 'people-outline' as const, title: 'Team Outing', date: 'Jun 21', color: Colors.success },
+            { icon: 'megaphone-outline' as const, title: 'Q2 Town Hall', date: 'Jun 15', color: '#4DA8DA', bg: '#E1F0FA' },
+            { icon: 'document-text-outline' as const, title: 'New Leave Policy', date: 'Jul 1', color: '#2E86B5', bg: '#C8E4F5' },
+            { icon: 'people-circle-outline' as const, title: 'Team Outing', date: 'Jun 21', color: '#34D399', bg: '#D1FAE5' },
           ].map((a, i) => (
-            <TouchableOpacity key={i} style={[styles.announcementCard, { borderTopColor: a.color }]} onPress={() => router.push('/announcements')}>
-              <View style={[styles.annIconBox, { backgroundColor: a.color + '15' }]}>
-                <Ionicons name={a.iconName} size={20} color={a.color} />
+            <TouchableOpacity key={i} style={[s.annCard, { borderTopColor: a.color }]} onPress={() => router.push('/announcements')} activeOpacity={0.82}>
+              <View style={[s.annIcon, { backgroundColor: a.bg }]}>
+                <Ionicons name={a.icon} size={18} color={a.color} />
               </View>
-              <Text style={styles.announcementTitle}>{a.title}</Text>
-              <Text style={styles.announcementDate}>{a.date}</Text>
+              <Text style={s.annTitle} numberOfLines={2}>{a.title}</Text>
+              <View style={s.annDateRow}>
+                <Ionicons name="calendar-outline" size={10} color={Colors.gray400} />
+                <Text style={s.annDate}> {a.date}</Text>
+              </View>
             </TouchableOpacity>
           ))}
         </ScrollView>
 
-        <View style={{ height: 100 }} />
-      </Animated.ScrollView>
+        <View style={{ height: 110 }} />
+      </ScrollView>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.gray50 },
+const s = StyleSheet.create({
+  root: { flex: 1, backgroundColor: '#EEF6FC' },
+
+  // Header
   header: {
-    backgroundColor: Colors.primary,
-    paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 24) + 8 : 52,
-    paddingHorizontal: Spacing[4], paddingBottom: 14, overflow: 'hidden', zIndex: 10,
+    paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 24) + 10 : 54,
+    paddingHorizontal: 16,
+    paddingBottom: 20,
+    overflow: 'hidden',
   },
-  headerCircle1: { position: 'absolute', width: 260, height: 260, borderRadius: 130, backgroundColor: 'rgba(96,165,250,0.12)', top: -80, right: -50 },
-  headerCircle2: { position: 'absolute', width: 160, height: 160, borderRadius: 80, backgroundColor: 'rgba(30,64,175,0.18)', bottom: -30, left: -30 },
-  headerTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 },
-  greeting: { fontSize: Typography.fontSize.xs, color: 'rgba(255,255,255,0.65)', marginBottom: 2, letterSpacing: 0.3 },
-  userName: { fontSize: Typography.fontSize.lg, fontWeight: '800', color: Colors.white, letterSpacing: -0.3 },
-  userRole: { fontSize: Typography.fontSize.xs, color: 'rgba(255,255,255,0.55)', marginTop: 2 },
-  headerActions: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  iconBtn: { position: 'relative', padding: 6, backgroundColor: 'rgba(255,255,255,0.12)', borderRadius: Radius.md, minWidth: 36, minHeight: 36, alignItems: 'center', justifyContent: 'center' },
-  badge: { position: 'absolute', top: -2, right: -2, minWidth: 16, height: 16, borderRadius: 8, backgroundColor: Colors.danger, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: Colors.primary, paddingHorizontal: 3 },
-  badgeText: { fontSize: 9, color: Colors.white, fontWeight: '700' },
-  tabRow: { marginHorizontal: -4 },
-  tab: { paddingHorizontal: 14, paddingVertical: 7, borderRadius: Radius.full, marginHorizontal: 3 },
-  tabActive: { backgroundColor: 'rgba(255,255,255,0.22)' },
-  tabText: { fontSize: Typography.fontSize.sm, color: 'rgba(255,255,255,0.55)', fontWeight: '600' },
-  tabTextActive: { color: Colors.white, fontWeight: '700' },
+  hCircle1: { position: 'absolute', width: 220, height: 220, borderRadius: 110, backgroundColor: 'rgba(255,255,255,0.06)', top: -60, right: -40 },
+  hCircle2: { position: 'absolute', width: 140, height: 140, borderRadius: 70, backgroundColor: 'rgba(255,255,255,0.05)', bottom: -20, left: -20 },
+  hRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 18 },
+  hLeft: { flex: 1 },
+  hGreeting: { fontSize: 12, color: 'rgba(255,255,255,0.7)', fontWeight: '500', marginBottom: 3 },
+  hName: { fontSize: 22, fontWeight: '800', color: '#fff', letterSpacing: -0.4 },
+  hRole: { fontSize: 11, color: 'rgba(255,255,255,0.6)', marginTop: 2 },
+  hRight: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 2 },
+  notifBtn: { width: 38, height: 38, borderRadius: 19, backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center', justifyContent: 'center' },
+  notifDot: { position: 'absolute', top: -1, right: -1, minWidth: 15, height: 15, borderRadius: 8, backgroundColor: '#F87171', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3, borderWidth: 1.5, borderColor: '#4DA8DA' },
+  notifDotTxt: { fontSize: 8, color: '#fff', fontWeight: '800' },
+  avatarWrap: { position: 'relative' },
+  avatarOnline: { position: 'absolute', bottom: 1, right: 1, width: 10, height: 10, borderRadius: 5, backgroundColor: '#34D399', borderWidth: 2, borderColor: '#4DA8DA' },
+
+  // Attendance strip
+  attStrip: { flexDirection: 'row', backgroundColor: 'rgba(255,255,255,0.13)', borderRadius: 14, padding: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)' },
+  attSlot: { flex: 1, alignItems: 'center', gap: 3 },
+  attSlotLabel: { fontSize: 9, color: 'rgba(255,255,255,0.6)', fontWeight: '700', letterSpacing: 0.8, textTransform: 'uppercase', marginTop: 2 },
+  attSlotVal: { fontSize: 13, fontWeight: '800', color: '#fff', letterSpacing: -0.2 },
+  attDivider: { width: 1, backgroundColor: 'rgba(255,255,255,0.2)', marginVertical: 2 },
+
+  // Scroll
   scroll: { flex: 1 },
-  scrollContent: { paddingHorizontal: Spacing[4], paddingTop: Spacing[4] },
-  attendanceCard: { marginBottom: Spacing[4], padding: Spacing[4] },
-  attendanceHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },
-  attendanceDayLabel: { fontSize: Typography.fontSize.xs, color: Colors.gray500, letterSpacing: 0.8, fontWeight: '600', textTransform: 'uppercase' },
-  attendanceTitle: { fontSize: Typography.fontSize.md, fontWeight: '700', color: Colors.gray900, marginTop: 2 },
-  timerSection: { alignItems: 'center', marginBottom: 14 },
-  timerRing: { width: 120, height: 120, borderRadius: 60, borderWidth: 3, borderColor: Colors.primary + '30', alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.primary + '08' },
-  timerLabel: { fontSize: 9, color: Colors.gray500, letterSpacing: 1.2, fontWeight: '700', textTransform: 'uppercase' },
-  timerValue: { fontSize: Typography.fontSize['2xl'], fontWeight: '800', color: Colors.primary, letterSpacing: -1 },
-  timerSec: { fontSize: Typography.fontSize.xs, color: Colors.gray400, marginTop: 1 },
-  checkInRow: { flexDirection: 'row', marginBottom: 10 },
-  checkItem: { flex: 1, alignItems: 'center' },
-  checkDot: { width: 7, height: 7, borderRadius: 4, marginBottom: 4 },
-  checkLabel: { fontSize: 10, color: Colors.gray500, letterSpacing: 0.8, fontWeight: '600', textTransform: 'uppercase', marginBottom: 2 },
-  checkTime: { fontSize: Typography.fontSize.md, fontWeight: '700', color: Colors.gray900 },
-  checkDivider: { width: 1, backgroundColor: Colors.gray200, marginVertical: 4 },
-  locationRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 14 },
-  locationTag: { fontSize: Typography.fontSize.xs, color: Colors.gray500 },
-  checkOutBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, backgroundColor: Colors.dangerLight, borderRadius: Radius.md, paddingVertical: 12, borderWidth: 1, borderColor: Colors.danger + '30' },
-  checkOutBtnText: { fontSize: Typography.fontSize.sm, fontWeight: '700', color: Colors.danger },
-  quickActions: { marginBottom: Spacing[4] },
-  quickAction: { alignItems: 'center', marginRight: 14, minWidth: 60 },
-  quickActionIcon: { width: 50, height: 50, borderRadius: 14, alignItems: 'center', justifyContent: 'center', marginBottom: 6 },
-  quickActionLabel: { fontSize: Typography.fontSize.xs, color: Colors.gray600, fontWeight: '600', textAlign: 'center' },
-  kpiRow: { flexDirection: 'row', marginBottom: Spacing[2] },
-  taskRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
-  taskLeft: { flex: 1, marginRight: 8 },
-  taskTitle: { fontSize: Typography.fontSize.base, fontWeight: '600', color: Colors.gray900, marginBottom: 2 },
-  taskProject: { fontSize: Typography.fontSize.xs, color: Colors.gray500, marginBottom: 6 },
-  taskMeta: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  taskDueRow: { flexDirection: 'row', alignItems: 'center' },
-  taskDue: { fontSize: Typography.fontSize.xs, color: Colors.gray400 },
-  projectRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  projectInfo: { flex: 1 },
-  projectName: { fontSize: Typography.fontSize.base, fontWeight: '700', color: Colors.gray900 },
-  projectClient: { fontSize: Typography.fontSize.xs, color: Colors.gray500, marginTop: 2 },
-  projectProgress: { fontSize: Typography.fontSize.lg, fontWeight: '700', color: Colors.primary },
-  projectFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 },
+  scrollContent: { paddingHorizontal: 16, paddingTop: 20, backgroundColor: '#EEF6FC' },
+
+  // Section
+  sectionRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, marginTop: 6 },
+  sectionTitle: { fontSize: 15, fontWeight: '700', color: '#163E57', letterSpacing: -0.2 },
+  seeAll: { fontSize: 12, color: Colors.primary, fontWeight: '600' },
+
+  // Quick Actions
+  qaRow: { paddingBottom: 16, gap: 6 },
+  qaItem: { alignItems: 'center', width: 64 },
+  qaCircle: { width: 52, height: 52, borderRadius: 26, alignItems: 'center', justifyContent: 'center', marginBottom: 6, ...Shadow.sm },
+  qaLabel: { fontSize: 10, color: '#3A7399', fontWeight: '600', textAlign: 'center' },
+
+  // Stats Grid
+  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 6 },
+  statCard: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 14,
+    ...Shadow.sm,
+    borderWidth: 1,
+    borderColor: '#C8E4F5',
+  },
+  statIconBox: { width: 38, height: 38, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginBottom: 10 },
+  statValue: { fontSize: 26, fontWeight: '800', color: '#163E57', letterSpacing: -0.5, lineHeight: 30 },
+  statLabel: { fontSize: 11, color: '#5590B5', marginTop: 3, fontWeight: '500' },
+
+  // Task Cards
+  taskCard: {
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    padding: 14,
+    marginBottom: 10,
+    ...Shadow.sm,
+    borderWidth: 1,
+    borderColor: '#C8E4F5',
+  },
+  taskTop: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 },
+  taskPriorityDot: { width: 7, height: 7, borderRadius: 4, flexShrink: 0 },
+  taskTitle: { flex: 1, fontSize: 14, fontWeight: '600', color: '#163E57' },
+  taskProject: { fontSize: 11, color: '#78AECF', marginBottom: 8, marginLeft: 15 },
+  taskProgressRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 6 },
+  taskProgressTxt: { fontSize: 10, color: Colors.primary, fontWeight: '700', width: 28, textAlign: 'right' },
+  taskBottom: { flexDirection: 'row', alignItems: 'center', marginLeft: 15 },
+  taskDue: { fontSize: 11, color: '#78AECF' },
+
+  // Project Cards
+  projectCard: {
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    padding: 14,
+    marginBottom: 10,
+    ...Shadow.sm,
+    borderWidth: 1,
+    borderColor: '#C8E4F5',
+  },
+  projectTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
+  projectInfo: { flex: 1, marginRight: 10 },
+  projectName: { fontSize: 14, fontWeight: '700', color: '#163E57' },
+  projectClient: { fontSize: 11, color: '#78AECF', marginTop: 2 },
+  projectPctBadge: { backgroundColor: Colors.primary + '12', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 },
+  projectPct: { fontSize: 13, fontWeight: '800', color: Colors.primary },
+  projectBottom: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   projectTasksRow: { flexDirection: 'row', alignItems: 'center' },
-  projectTasks: { fontSize: Typography.fontSize.xs, color: Colors.gray500 },
-  teamAvatars: { flexDirection: 'row' },
-  moreMembers: { width: 24, height: 24, borderRadius: 12, backgroundColor: Colors.gray200, marginLeft: -8, alignItems: 'center', justifyContent: 'center' },
-  moreMembersText: { fontSize: 9, color: Colors.gray600, fontWeight: '700' },
-  announcementsRow: { marginBottom: Spacing[4] },
-  announcementCard: { width: 140, backgroundColor: Colors.white, borderRadius: Radius.md, padding: Spacing[3], marginRight: Spacing[3], borderTopWidth: 3, ...Shadow.sm },
-  annIconBox: { width: 36, height: 36, borderRadius: Radius.sm, alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
-  announcementTitle: { fontSize: Typography.fontSize.sm, fontWeight: '700', color: Colors.gray900, marginBottom: 4 },
-  announcementDate: { fontSize: Typography.fontSize.xs, color: Colors.gray500 },
+  projectTasks: { fontSize: 11, color: '#78AECF' },
+  teamRow: { flexDirection: 'row' },
+  moreMembers: { width: 22, height: 22, borderRadius: 11, backgroundColor: '#C8E4F5', marginLeft: -7, alignItems: 'center', justifyContent: 'center' },
+  moreTxt: { fontSize: 8, color: '#3A7399', fontWeight: '700' },
+
+  // Announcements
+  annCard: {
+    width: 138,
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    padding: 12,
+    marginRight: 10,
+    borderTopWidth: 3,
+    ...Shadow.sm,
+    borderWidth: 1,
+    borderColor: '#C8E4F5',
+  },
+  annIcon: { width: 34, height: 34, borderRadius: 10, alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
+  annTitle: { fontSize: 12, fontWeight: '700', color: '#163E57', marginBottom: 6, lineHeight: 16 },
+  annDateRow: { flexDirection: 'row', alignItems: 'center' },
+  annDate: { fontSize: 10, color: '#78AECF' },
 });

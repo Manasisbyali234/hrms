@@ -14,9 +14,9 @@ interface TabIconProps {
 const TabIcon: React.FC<TabIconProps> = ({ name, label, focused, color }) => (
   <View style={[styles.tabItem, focused && styles.tabItemFocused]}>
     <View style={focused ? styles.activeIconBg : null}>
-      <Ionicons name={name} size={focused ? 22 : 21} color={color} />
+      <Ionicons name={name} size={focused ? 20 : 20} color={focused ? '#fff' : color} />
     </View>
-    <Text style={[styles.tabLabel, { color, fontWeight: focused ? '700' : '500' }]}>{label}</Text>
+    <Text style={[styles.tabLabel, { color: focused ? Colors.primary : color, fontWeight: focused ? '700' : '500' }]}>{label}</Text>
   </View>
 );
 
@@ -86,30 +86,28 @@ const styles = StyleSheet.create({
   tabBar: {
     position: 'absolute',
     bottom: 0, left: 0, right: 0,
-    height: Platform.OS === 'ios' ? 82 : 64,
-    backgroundColor: Colors.white,
-    borderTopWidth: 1,
-    borderTopColor: Colors.gray100,
-    paddingBottom: Platform.OS === 'ios' ? 22 : 6,
-    paddingTop: 6,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
-    elevation: 16,
+    height: Platform.OS === 'ios' ? 84 : 66,
+    backgroundColor: '#fff',
+    borderTopWidth: 0,
+    paddingBottom: Platform.OS === 'ios' ? 24 : 8,
+    paddingTop: 8,
+    shadowColor: '#4DA8DA',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.10,
+    shadowRadius: 16,
+    elevation: 20,
   },
   tabItem: {
     alignItems: 'center', justifyContent: 'center',
-    paddingVertical: 2, paddingHorizontal: 6,
-    minWidth: 52, minHeight: 44,
+    minWidth: 52, minHeight: 44, gap: 2,
   },
   tabItemFocused: {},
   activeIconBg: {
-    backgroundColor: Colors.primary + '14',
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-    marginBottom: 1,
+    backgroundColor: Colors.primary,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 4,
+    marginBottom: 2,
   },
-  tabLabel: { fontSize: 10, letterSpacing: 0.1, marginTop: 2 },
+  tabLabel: { fontSize: 10, letterSpacing: 0.1 },
 });

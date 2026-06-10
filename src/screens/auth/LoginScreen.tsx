@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   },
   headerCircle: {
     position: 'absolute', width: 280, height: 280, borderRadius: 140,
-    backgroundColor: 'rgba(96,165,250,0.15)', top: -90, right: -70,
+    backgroundColor: 'rgba(255,255,255,0.12)', top: -90, right: -70,
   },
   backBtn: {
     position: 'absolute',

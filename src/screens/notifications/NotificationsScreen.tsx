@@ -12,7 +12,7 @@ type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 type Notification = typeof mockNotifications[number];
 
 const TYPE_CONFIG: Record<string, { icon: IoniconName; bg: string; color: string }> = {
-  info:    { icon: 'information-circle-outline', bg: '#EFF6FF', color: Colors.info },
+  info:    { icon: 'information-circle-outline', bg: Colors.infoLight,    color: Colors.info },
   success: { icon: 'checkmark-circle-outline',  bg: Colors.successLight, color: Colors.success },
   warning: { icon: 'warning-outline',           bg: Colors.warningLight, color: Colors.warning },
   danger:  { icon: 'alert-circle-outline',      bg: Colors.dangerLight,  color: Colors.danger },
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
   },
   cardUnread: {
     borderColor: Colors.primary + '25',
-    backgroundColor: '#FAFCFF',
+    backgroundColor: '#F0F8FF',
   },
   unreadBar: {
     position: 'absolute',

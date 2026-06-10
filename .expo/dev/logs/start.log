@@ -471,3 +471,258 @@
 {"_e":"metro:client_log","_t":1781078198635,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
 {"_e":"metro:client_log","_t":1781078203089,"level":"error","data":["The action 'GO_BACK' was not handled by any navigator.\n\nIs there any screen to go back to?\n\nThis is a development-only warning and won't be shown in production."]}
 {"_e":"metro:client_log","_t":1781078208880,"level":"warn","data":["props.pointerEvents is deprecated. Use style.pointerEvents"]}
+{"_e":"root:init","_t":1781086532559,"format":"v0-jsonl","version":"56.1.14"}
+{"_e":"env:mode","_t":1781086532561,"nodeEnv":"development","babelEnv":"development","mode":"development"}
+{"_e":"env:load","_t":1781086532566,"mode":"development","files":[],"env":{}}
+{"_e":"devserver:start","_t":1781086533135,"mode":"development","web":true,"baseUrl":"","asyncRoutes":false,"routerRoot":"../..\\..\\app","serverComponents":false,"serverActions":false,"serverRendering":false,"apiRoutes":false,"exporting":false}
+{"_e":"metro:config","_t":1781086533989,"serverRoot":"../..\\..","projectRoot":"../..\\..","exporting":false,"flags":{"autolinkingModuleResolution":false,"serverActions":false,"serverComponents":false,"reactCompiler":false,"optimizeGraph":false,"treeshaking":false,"logbox":false}}
+{"_e":"metro:instantiate","_t":1781086546609,"atlas":false,"workers":6,"host":"::","port":8081}
+{"_e":"metro:bundling:started","_t":1781086605944,"id":"1","platform":"web","environment":null,"entry":"index.ts"}
+{"_e":"metro:bundling:progress","_t":1781086605946,"id":"1","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1781086605957,"id":"1","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1781086606116,"id":"1","progress":0.1466727025803531,"total":47,"current":18}
+{"_e":"metro:bundling:progress","_t":1781086606215,"id":"1","progress":0.1466727025803531,"total":192,"current":46}
+{"_e":"metro:bundling:progress","_t":1781086606317,"id":"1","progress":0.15552469748065859,"total":284,"current":112}
+{"_e":"metro:bundling:progress","_t":1781086606417,"id":"1","progress":0.2613622017422043,"total":356,"current":182}
+{"_e":"metro:bundling:progress","_t":1781086606517,"id":"1","progress":0.3491735537190083,"total":484,"current":286}
+{"_e":"metro:bundling:progress","_t":1781086606624,"id":"1","progress":0.36,"total":520,"current":312}
+{"_e":"metro:bundling:progress","_t":1781086606724,"id":"1","progress":0.4984040651318898,"total":619,"current":437}
+{"_e":"metro:bundling:progress","_t":1781086606860,"id":"1","progress":0.5333922484534781,"total":712,"current":520}
+{"_e":"metro:bundling:progress","_t":1781086606960,"id":"1","progress":0.6762461303253878,"total":743,"current":611}
+{"_e":"metro:bundling:progress","_t":1781086607060,"id":"1","progress":0.8777463606509167,"total":808,"current":757}
+{"_e":"metro:bundling:progress","_t":1781086607160,"id":"1","progress":0.8938460126685879,"total":898,"current":849}
+{"_e":"metro:bundling:progress","_t":1781086607260,"id":"1","progress":0.9898939506389549,"total":987,"current":982}
+{"_e":"metro:bundling:done","_t":1781086607354,"id":"1","total":987,"ms":1409.7886}
+{"_e":"metro:client_log","_t":1781086607617,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1781086607618,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1781086607646,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:bundling:started","_t":1781086617753,"id":"7","platform":"web","environment":null,"entry":"index.ts"}
+{"_e":"metro:bundling:progress","_t":1781086617753,"id":"7","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1781086617850,"id":"7","total":1,"ms":97.1216}
+{"_e":"metro:client_log","_t":1781086618050,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1781086618051,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1781086618062,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1781086624093,"level":"warn","data":["props.pointerEvents is deprecated. Use style.pointerEvents"]}
+{"_e":"metro:client_log","_t":1781086724310,"level":"warn","data":["Image: style.resizeMode is deprecated. Please use props.resizeMode."]}
+{"_e":"metro:bundling:started","_t":1781086769832,"id":"c","platform":"web","environment":null,"entry":"index.ts"}
+{"_e":"metro:bundling:progress","_t":1781086769832,"id":"c","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1781086769899,"id":"c","total":1,"ms":67.1409}
+{"_e":"metro:client_log","_t":1781086770190,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1781086770190,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1781086770245,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1781086928214,"level":"warn","data":["Animated: `useNativeDriver` is not supported because the native animated module is missing. Falling back to JS-based animation. To resolve this, add `RCTAnimation` module to this app, or remove `useNativeDriver`. Make sure to run `bundle exec pod install` first. Read more about autolinking: https://github.com/react-native-community/cli/blob/master/docs/autolinking.md"]}
+{"_e":"metro:client_log","_t":1781086928224,"level":"warn","data":["Animated: `useNativeDriver` is not supported because the native animated module is missing. Falling back to JS-based animation. To resolve this, add `RCTAnimation` module to this app, or remove `useNativeDriver`. Make sure to run `bundle exec pod install` first. Read more about autolinking: https://github.com/react-native-community/cli/blob/master/docs/autolinking.md"]}
+{"_e":"metro:bundling:started","_t":1781087150354,"id":"g","platform":"web","environment":null,"entry":"index.ts"}
+{"_e":"metro:bundling:progress","_t":1781087150355,"id":"g","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1781087150432,"id":"g","total":1,"ms":77.3296}
+{"_e":"metro:client_log","_t":1781087150700,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1781087150700,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1781087150743,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1781087150899,"level":"warn","data":["Animated: `useNativeDriver` is not supported because the native animated module is missing. Falling back to JS-based animation. To resolve this, add `RCTAnimation` module to this app, or remove `useNativeDriver`. Make sure to run `bundle exec pod install` first. Read more about autolinking: https://github.com/react-native-community/cli/blob/master/docs/autolinking.md"]}
+{"_e":"metro:client_log","_t":1781087154432,"level":"warn","data":["props.pointerEvents is deprecated. Use style.pointerEvents"]}
+{"_e":"metro:bundling:started","_t":1781087289210,"id":"k","platform":"web","environment":null,"entry":"index.ts"}
+{"_e":"metro:bundling:progress","_t":1781087289211,"id":"k","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1781087289279,"id":"k","total":1,"ms":68.8155}
+{"_e":"metro:client_log","_t":1781087289586,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1781087289586,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1781087289654,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1781087289834,"level":"warn","data":["Animated: `useNativeDriver` is not supported because the native animated module is missing. Falling back to JS-based animation. To resolve this, add `RCTAnimation` module to this app, or remove `useNativeDriver`. Make sure to run `bundle exec pod install` first. Read more about autolinking: https://github.com/react-native-community/cli/blob/master/docs/autolinking.md"]}
+{"_e":"metro:client_log","_t":1781087294947,"level":"warn","data":["props.pointerEvents is deprecated. Use style.pointerEvents"]}
+{"_e":"metro:bundling:started","_t":1781087312386,"id":"p","platform":"web","environment":null,"entry":"index.ts"}
+{"_e":"metro:bundling:progress","_t":1781087312386,"id":"p","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1781087312459,"id":"p","total":1,"ms":72.658}
+{"_e":"metro:client_log","_t":1781087312735,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1781087312736,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1781087312779,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1781087312923,"level":"warn","data":["Animated: `useNativeDriver` is not supported because the native animated module is missing. Falling back to JS-based animation. To resolve this, add `RCTAnimation` module to this app, or remove `useNativeDriver`. Make sure to run `bundle exec pod install` first. Read more about autolinking: https://github.com/react-native-community/cli/blob/master/docs/autolinking.md"]}
+{"_e":"metro:bundling:started","_t":1781087325788,"id":"u","platform":"web","environment":null,"entry":"index.ts"}
+{"_e":"metro:bundling:progress","_t":1781087325789,"id":"u","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1781087325852,"id":"u","total":1,"ms":63.258}
+{"_e":"metro:client_log","_t":1781087326139,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1781087326139,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1781087326184,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1781087326316,"level":"warn","data":["Animated: `useNativeDriver` is not supported because the native animated module is missing. Falling back to JS-based animation. To resolve this, add `RCTAnimation` module to this app, or remove `useNativeDriver`. Make sure to run `bundle exec pod install` first. Read more about autolinking: https://github.com/react-native-community/cli/blob/master/docs/autolinking.md"]}
+{"_e":"metro:client_log","_t":1781087330613,"level":"warn","data":["props.pointerEvents is deprecated. Use style.pointerEvents"]}
+{"_e":"metro:bundling:started","_t":1781087468059,"id":"x","platform":"web","environment":null,"entry":"index.ts"}
+{"_e":"metro:bundling:progress","_t":1781087468059,"id":"x","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1781087468133,"id":"x","total":1,"ms":74.225}
+{"_e":"metro:client_log","_t":1781087468456,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1781087468456,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1781087468500,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1781087468612,"level":"warn","data":["Animated: `useNativeDriver` is not supported because the native animated module is missing. Falling back to JS-based animation. To resolve this, add `RCTAnimation` module to this app, or remove `useNativeDriver`. Make sure to run `bundle exec pod install` first. Read more about autolinking: https://github.com/react-native-community/cli/blob/master/docs/autolinking.md"]}
+{"_e":"metro:client_log","_t":1781087529323,"level":"warn","data":["props.pointerEvents is deprecated. Use style.pointerEvents"]}
+{"_e":"metro:bundling:started","_t":1781087604185,"id":"13","platform":"web","environment":null,"entry":"index.ts"}
+{"_e":"metro:bundling:progress","_t":1781087604185,"id":"13","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1781087604243,"id":"13","total":1,"ms":57.9684}
+{"_e":"metro:client_log","_t":1781087605292,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1781087605292,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1781087605351,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1781087605531,"level":"warn","data":["Animated: `useNativeDriver` is not supported because the native animated module is missing. Falling back to JS-based animation. To resolve this, add `RCTAnimation` module to this app, or remove `useNativeDriver`. Make sure to run `bundle exec pod install` first. Read more about autolinking: https://github.com/react-native-community/cli/blob/master/docs/autolinking.md"]}
+{"_e":"metro:client_log","_t":1781087610148,"level":"warn","data":["props.pointerEvents is deprecated. Use style.pointerEvents"]}
+{"_e":"metro:bundling:started","_t":1781087627903,"id":"18","platform":"web","environment":null,"entry":"index.ts"}
+{"_e":"metro:bundling:progress","_t":1781087627903,"id":"18","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1781087627972,"id":"18","total":1,"ms":68.5104}
+{"_e":"metro:client_log","_t":1781087628300,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1781087628300,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1781087628344,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1781087628510,"level":"warn","data":["Animated: `useNativeDriver` is not supported because the native animated module is missing. Falling back to JS-based animation. To resolve this, add `RCTAnimation` module to this app, or remove `useNativeDriver`. Make sure to run `bundle exec pod install` first. Read more about autolinking: https://github.com/react-native-community/cli/blob/master/docs/autolinking.md"]}
+{"_e":"metro:bundling:started","_t":1781087742081,"id":"1d","platform":"web","environment":null,"entry":"index.ts"}
+{"_e":"metro:bundling:progress","_t":1781087742082,"id":"1d","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1781087742144,"id":"1d","total":1,"ms":62.7389}
+{"_e":"metro:client_log","_t":1781087743755,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1781087743755,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1781087743799,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1781087743969,"level":"warn","data":["Animated: `useNativeDriver` is not supported because the native animated module is missing. Falling back to JS-based animation. To resolve this, add `RCTAnimation` module to this app, or remove `useNativeDriver`. Make sure to run `bundle exec pod install` first. Read more about autolinking: https://github.com/react-native-community/cli/blob/master/docs/autolinking.md"]}
+{"_e":"metro:client_log","_t":1781087752266,"level":"warn","data":["props.pointerEvents is deprecated. Use style.pointerEvents"]}
+{"_e":"metro:bundling:started","_t":1781089480950,"id":"1i","platform":"web","environment":null,"entry":"index.ts"}
+{"_e":"metro:bundling:progress","_t":1781089480959,"id":"1i","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1781089481262,"id":"1i","total":1,"ms":306.1011}
+{"_e":"metro:client_log","_t":1781089481763,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1781089481763,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1781089481789,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1781089482005,"level":"warn","data":["Animated: `useNativeDriver` is not supported because the native animated module is missing. Falling back to JS-based animation. To resolve this, add `RCTAnimation` module to this app, or remove `useNativeDriver`. Make sure to run `bundle exec pod install` first. Read more about autolinking: https://github.com/react-native-community/cli/blob/master/docs/autolinking.md"]}
+{"_e":"root:init","_t":1781089721037,"format":"v0-jsonl","version":"56.1.14"}
+{"_e":"env:mode","_t":1781089721039,"nodeEnv":"development","babelEnv":"development","mode":"development"}
+{"_e":"env:load","_t":1781089721044,"mode":"development","files":[],"env":{}}
+{"_e":"devserver:start","_t":1781089721653,"mode":"development","web":true,"baseUrl":"","asyncRoutes":false,"routerRoot":"../..\\..\\app","serverComponents":false,"serverActions":false,"serverRendering":false,"apiRoutes":false,"exporting":false}
+{"_e":"metro:config","_t":1781089722550,"serverRoot":"../..\\..","projectRoot":"../..\\..","exporting":false,"flags":{"autolinkingModuleResolution":false,"serverActions":false,"serverComponents":false,"reactCompiler":false,"optimizeGraph":false,"treeshaking":false,"logbox":false}}
+{"_e":"metro:instantiate","_t":1781089734772,"atlas":false,"workers":6,"host":"::","port":8081}
+{"_e":"metro:bundling:started","_t":1781089743091,"id":"2","platform":"web","environment":null,"entry":"index.ts"}
+{"_e":"metro:bundling:progress","_t":1781089743092,"id":"2","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1781089743098,"id":"2","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1781089743198,"id":"2","progress":0.1466727025803531,"total":47,"current":18}
+{"_e":"metro:bundling:progress","_t":1781089743341,"id":"2","progress":0.1466727025803531,"total":53,"current":19}
+{"_e":"metro:bundling:progress","_t":1781089743441,"id":"2","progress":0.1466727025803531,"total":203,"current":49}
+{"_e":"metro:bundling:progress","_t":1781089743542,"id":"2","progress":0.1466727025803531,"total":266,"current":89}
+{"_e":"metro:bundling:progress","_t":1781089743642,"id":"2","progress":0.19542868828078525,"total":328,"current":145}
+{"_e":"metro:bundling:progress","_t":1781089743742,"id":"2","progress":0.3105113146023911,"total":463,"current":258}
+{"_e":"metro:bundling:progress","_t":1781089743842,"id":"2","progress":0.3894146986358993,"total":516,"current":322}
+{"_e":"metro:bundling:progress","_t":1781089743942,"id":"2","progress":0.43799551743278764,"total":618,"current":409}
+{"_e":"metro:bundling:progress","_t":1781089744042,"id":"2","progress":0.5658834510185862,"total":666,"current":501}
+{"_e":"metro:bundling:progress","_t":1781089744165,"id":"2","progress":0.7261427122287998,"total":771,"current":657}
+{"_e":"metro:bundling:progress","_t":1781089744265,"id":"2","progress":0.88317277892562,"total":880,"current":827}
+{"_e":"metro:bundling:progress","_t":1781089744366,"id":"2","progress":0.9919192250323722,"total":988,"current":984}
+{"_e":"metro:bundling:done","_t":1781089744457,"id":"2","total":988,"ms":1365.126}
+{"_e":"metro:client_log","_t":1781089744754,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1781089744755,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1781089744800,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1781089744993,"level":"warn","data":["Animated: `useNativeDriver` is not supported because the native animated module is missing. Falling back to JS-based animation. To resolve this, add `RCTAnimation` module to this app, or remove `useNativeDriver`. Make sure to run `bundle exec pod install` first. Read more about autolinking: https://github.com/react-native-community/cli/blob/master/docs/autolinking.md"]}
+{"_e":"metro:client_log","_t":1781089754367,"level":"warn","data":["props.pointerEvents is deprecated. Use style.pointerEvents"]}
+{"_e":"metro:bundling:started","_t":1781090118446,"id":"6","platform":"web","environment":null,"entry":"index.ts"}
+{"_e":"metro:bundling:progress","_t":1781090118446,"id":"6","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1781090118534,"id":"6","total":1,"ms":87.3527}
+{"_e":"metro:client_log","_t":1781090118852,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1781090118853,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1781090118882,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1781090119054,"level":"warn","data":["Animated: `useNativeDriver` is not supported because the native animated module is missing. Falling back to JS-based animation. To resolve this, add `RCTAnimation` module to this app, or remove `useNativeDriver`. Make sure to run `bundle exec pod install` first. Read more about autolinking: https://github.com/react-native-community/cli/blob/master/docs/autolinking.md"]}
+{"_e":"metro:client_log","_t":1781090123940,"level":"warn","data":["props.pointerEvents is deprecated. Use style.pointerEvents"]}
+{"_e":"metro:client_log","_t":1781090274530,"level":"warn","data":["Image: style.resizeMode is deprecated. Please use props.resizeMode."]}
+{"_e":"metro:bundling:started","_t":1781090459666,"id":"c","platform":"web","environment":null,"entry":"index.ts"}
+{"_e":"metro:bundling:progress","_t":1781090459666,"id":"c","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1781090459771,"id":"c","total":1,"ms":105.2921}
+{"_e":"metro:client_log","_t":1781090460061,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1781090460061,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1781090460090,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1781090460265,"level":"warn","data":["Animated: `useNativeDriver` is not supported because the native animated module is missing. Falling back to JS-based animation. To resolve this, add `RCTAnimation` module to this app, or remove `useNativeDriver`. Make sure to run `bundle exec pod install` first. Read more about autolinking: https://github.com/react-native-community/cli/blob/master/docs/autolinking.md"]}
+{"_e":"metro:client_log","_t":1781090463929,"level":"warn","data":["props.pointerEvents is deprecated. Use style.pointerEvents"]}
+{"_e":"metro:bundling:started","_t":1781090903238,"id":"h","platform":"web","environment":null,"entry":"index.ts"}
+{"_e":"metro:bundling:progress","_t":1781090903242,"id":"h","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1781090903291,"id":"h","total":1,"ms":52.5058}
+{"_e":"metro:client_log","_t":1781090903892,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1781090903892,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1781090903930,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1781090904066,"level":"warn","data":["Animated: `useNativeDriver` is not supported because the native animated module is missing. Falling back to JS-based animation. To resolve this, add `RCTAnimation` module to this app, or remove `useNativeDriver`. Make sure to run `bundle exec pod install` first. Read more about autolinking: https://github.com/react-native-community/cli/blob/master/docs/autolinking.md"]}
+{"_e":"metro:client_log","_t":1781090907807,"level":"warn","data":["props.pointerEvents is deprecated. Use style.pointerEvents"]}
+{"_e":"metro:client_log","_t":1781090947686,"level":"warn","data":["Image: style.resizeMode is deprecated. Please use props.resizeMode."]}
+{"_e":"metro:bundling:started","_t":1781091230253,"id":"n","platform":"web","environment":null,"entry":"index.ts"}
+{"_e":"metro:bundling:started","_t":1781091230451,"id":"o","platform":"web","environment":null,"entry":"src\\design-system\\components\\Card.tsx"}
+{"_e":"metro:bundling:started","_t":1781091230453,"id":"p","platform":"web","environment":null,"entry":"src\\screens\\dashboard\\DashboardScreen.tsx"}
+{"_e":"metro:bundling:started","_t":1781091230454,"id":"q","platform":"web","environment":null,"entry":"app\\(tabs)\\_layout.tsx"}
+{"_e":"metro:bundling:started","_t":1781091230454,"id":"r","platform":"web","environment":null,"entry":"src\\screens\\attendance\\AttendanceScreen.tsx"}
+{"_e":"metro:bundling:started","_t":1781091232367,"id":"s","platform":"web","environment":null,"entry":"src\\design-system\\components\\Card.tsx"}
+{"_e":"metro:bundling:started","_t":1781091232370,"id":"t","platform":"web","environment":null,"entry":"src\\screens\\attendance\\AttendanceScreen.tsx"}
+{"_e":"metro:bundling:started","_t":1781091274537,"id":"v","platform":"web","environment":null,"entry":"index.ts"}
+{"_e":"metro:bundling:progress","_t":1781091274537,"id":"v","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1781091274630,"id":"v","total":1,"ms":92.847}
+{"_e":"metro:client_log","_t":1781091275754,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1781091275754,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1781091275786,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1781091392265,"level":"error","data":["Invalid DOM property `transform-origin`. Did you mean `transformOrigin`?"]}
+{"_e":"metro:client_log","_t":1781091409625,"level":"error","data":["Invalid DOM property `transform-origin`. Did you mean `transformOrigin`?"]}
+{"_e":"metro:client_log","_t":1781092186765,"level":"warn","data":["Animated: `useNativeDriver` is not supported because the native animated module is missing. Falling back to JS-based animation. To resolve this, add `RCTAnimation` module to this app, or remove `useNativeDriver`. Make sure to run `bundle exec pod install` first. Read more about autolinking: https://github.com/react-native-community/cli/blob/master/docs/autolinking.md"]}
+{"_e":"metro:client_log","_t":1781092192327,"level":"warn","data":["props.pointerEvents is deprecated. Use style.pointerEvents"]}
+{"_e":"root:init","_t":1781092820258,"format":"v0-jsonl","version":"56.1.14"}
+{"_e":"env:mode","_t":1781092820260,"nodeEnv":"development","babelEnv":"development","mode":"development"}
+{"_e":"env:load","_t":1781092820265,"mode":"development","files":[],"env":{}}
+{"_e":"devserver:start","_t":1781092820836,"mode":"development","web":true,"baseUrl":"","asyncRoutes":false,"routerRoot":"../..\\..\\app","serverComponents":false,"serverActions":false,"serverRendering":false,"apiRoutes":false,"exporting":false}
+{"_e":"metro:config","_t":1781092821646,"serverRoot":"../..\\..","projectRoot":"../..\\..","exporting":false,"flags":{"autolinkingModuleResolution":false,"serverActions":false,"serverComponents":false,"reactCompiler":false,"optimizeGraph":false,"treeshaking":false,"logbox":false}}
+{"_e":"metro:instantiate","_t":1781092833805,"atlas":false,"workers":6,"host":"::","port":8081}
+{"_e":"metro:bundling:started","_t":1781092843987,"id":"1","platform":"web","environment":null,"entry":"index.ts"}
+{"_e":"metro:bundling:progress","_t":1781092843987,"id":"1","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1781092843996,"id":"1","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1781092844110,"id":"1","progress":0.1466727025803531,"total":47,"current":18}
+{"_e":"metro:bundling:progress","_t":1781092844210,"id":"1","progress":0.1466727025803531,"total":213,"current":62}
+{"_e":"metro:bundling:progress","_t":1781092844311,"id":"1","progress":0.15888307496699106,"total":286,"current":114}
+{"_e":"metro:bundling:progress","_t":1781092844410,"id":"1","progress":0.22922414560341756,"total":424,"current":203}
+{"_e":"metro:bundling:progress","_t":1781092844510,"id":"1","progress":0.3532846244415412,"total":498,"current":296}
+{"_e":"metro:bundling:progress","_t":1781092844610,"id":"1","progress":0.4459678176018015,"total":584,"current":390}
+{"_e":"metro:bundling:progress","_t":1781092844710,"id":"1","progress":0.5380705654559145,"total":668,"current":490}
+{"_e":"metro:bundling:progress","_t":1781092844811,"id":"1","progress":0.6788519626546422,"total":744,"current":613}
+{"_e":"metro:bundling:progress","_t":1781092844911,"id":"1","progress":0.7628585162634193,"total":790,"current":690}
+{"_e":"metro:bundling:progress","_t":1781092845011,"id":"1","progress":0.8638544506830981,"total":907,"current":843}
+{"_e":"metro:bundling:progress","_t":1781092845111,"id":"1","progress":0.982081,"total":1000,"current":991}
+{"_e":"metro:bundling:done","_t":1781092845226,"id":"1","total":1000,"ms":1239.1615}
+{"_e":"metro:client_log","_t":1781092845511,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1781092845512,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1781092845597,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1781092846382,"level":"warn","data":["Animated: `useNativeDriver` is not supported because the native animated module is missing. Falling back to JS-based animation. To resolve this, add `RCTAnimation` module to this app, or remove `useNativeDriver`. Make sure to run `bundle exec pod install` first. Read more about autolinking: https://github.com/react-native-community/cli/blob/master/docs/autolinking.md"]}
+{"_e":"metro:bundling:started","_t":1781092854643,"id":"4","platform":"web","environment":null,"entry":"index.ts"}
+{"_e":"metro:bundling:progress","_t":1781092854644,"id":"4","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1781092854715,"id":"4","total":1,"ms":71.707}
+{"_e":"metro:client_log","_t":1781092855246,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1781092855247,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1781092855283,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1781092855470,"level":"warn","data":["Animated: `useNativeDriver` is not supported because the native animated module is missing. Falling back to JS-based animation. To resolve this, add `RCTAnimation` module to this app, or remove `useNativeDriver`. Make sure to run `bundle exec pod install` first. Read more about autolinking: https://github.com/react-native-community/cli/blob/master/docs/autolinking.md"]}
+{"_e":"metro:client_log","_t":1781092863808,"level":"warn","data":["props.pointerEvents is deprecated. Use style.pointerEvents"]}
+{"_e":"metro:client_log","_t":1781092873121,"level":"error","data":["Invalid DOM property `transform-origin`. Did you mean `transformOrigin`?"]}
+{"_e":"metro:bundling:started","_t":1781093205946,"id":"b","platform":"web","environment":null,"entry":"index.ts"}
+{"_e":"metro:bundling:progress","_t":1781093205948,"id":"b","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1781093206051,"id":"b","total":1,"ms":104.9685}
+{"_e":"metro:client_log","_t":1781093206424,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1781093206424,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1781093206456,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1781093206671,"level":"warn","data":["Animated: `useNativeDriver` is not supported because the native animated module is missing. Falling back to JS-based animation. To resolve this, add `RCTAnimation` module to this app, or remove `useNativeDriver`. Make sure to run `bundle exec pod install` first. Read more about autolinking: https://github.com/react-native-community/cli/blob/master/docs/autolinking.md"]}
+{"_e":"metro:client_log","_t":1781093211587,"level":"warn","data":["props.pointerEvents is deprecated. Use style.pointerEvents"]}
+{"_e":"metro:client_log","_t":1781093223083,"level":"error","data":["Invalid DOM property `transform-origin`. Did you mean `transformOrigin`?"]}
+{"_e":"metro:client_log","_t":1781093288599,"level":"warn","data":["props.pointerEvents is deprecated. Use style.pointerEvents"]}
+{"_e":"metro:client_log","_t":1781093293626,"level":"error","data":["Invalid DOM property `transform-origin`. Did you mean `transformOrigin`?"]}
+{"_e":"metro:bundling:started","_t":1781093312782,"id":"m","platform":"web","environment":null,"entry":"index.ts"}
+{"_e":"metro:bundling:progress","_t":1781093312787,"id":"m","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1781093312843,"id":"m","total":1,"ms":61.0921}
+{"_e":"metro:client_log","_t":1781093313218,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1781093313218,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1781093313258,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1781093315826,"level":"error","data":["Invalid DOM property `transform-origin`. Did you mean `transformOrigin`?"]}
+{"_e":"metro:bundling:started","_t":1781093321957,"id":"s","platform":"web","environment":null,"entry":"index.ts"}
+{"_e":"metro:bundling:progress","_t":1781093321958,"id":"s","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1781093322009,"id":"s","total":1,"ms":51.4414}
+{"_e":"metro:client_log","_t":1781093322568,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1781093322568,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1781093322630,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1781093323916,"level":"error","data":["Invalid DOM property `transform-origin`. Did you mean `transformOrigin`?"]}
+{"_e":"metro:bundling:started","_t":1781093360020,"id":"x","platform":"web","environment":null,"entry":"index.ts"}
+{"_e":"metro:bundling:progress","_t":1781093360020,"id":"x","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1781093360070,"id":"x","total":1,"ms":49.8372}
+{"_e":"metro:client_log","_t":1781093360791,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1781093360792,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1781093360852,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1781093399289,"level":"error","data":["Invalid DOM property `transform-origin`. Did you mean `transformOrigin`?"]}
+{"_e":"metro:client_log","_t":1781093412441,"level":"warn","data":["props.pointerEvents is deprecated. Use style.pointerEvents"]}
+{"_e":"metro:bundling:started","_t":1781093439966,"id":"12","platform":"web","environment":null,"entry":"index.ts"}
+{"_e":"metro:bundling:progress","_t":1781093439966,"id":"12","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:done","_t":1781093440040,"id":"12","total":1,"ms":74.1513}
+{"_e":"metro:client_log","_t":1781093440619,"level":"info","data":["%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools","font-weight:bold"]}
+{"_e":"metro:client_log","_t":1781093440620,"level":"log","data":["Running application \"main\" with appParams:\n","{\"hydrate\": undefined, \"rootTag\": \"#root\"}","\nDevelopment-level warnings: ON.\nPerformance optimizations: OFF."]}
+{"_e":"metro:client_log","_t":1781093440671,"level":"warn","data":["\"shadow*\" style props are deprecated. Use \"boxShadow\"."]}
+{"_e":"metro:client_log","_t":1781093440813,"level":"warn","data":["Animated: `useNativeDriver` is not supported because the native animated module is missing. Falling back to JS-based animation. To resolve this, add `RCTAnimation` module to this app, or remove `useNativeDriver`. Make sure to run `bundle exec pod install` first. Read more about autolinking: https://github.com/react-native-community/cli/blob/master/docs/autolinking.md"]}
+{"_e":"metro:client_log","_t":1781093451389,"level":"warn","data":["props.pointerEvents is deprecated. Use style.pointerEvents"]}

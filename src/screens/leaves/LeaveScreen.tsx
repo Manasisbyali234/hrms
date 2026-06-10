@@ -4,67 +4,113 @@ import {
   Platform, StatusBar,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import Svg, { Circle } from 'react-native-svg';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Typography, Spacing, Radius, Shadow } from '../../design-system/tokens';
-import { Card, SectionHeader, KPIWidget } from '../../design-system/components/Card';
+import { SectionHeader } from '../../design-system/components/Card';
 import { Badge, statusToVariant } from '../../design-system/components/Badge';
-import { Button } from '../../design-system/components/Button';
 import { mockLeaves, currentUser } from '../../data/mockData';
 
+// ── Circular Progress Ring ────────────────────────────────────────────────────
+function RingProgress({ value, total, color, size = 64 }: { value: number; total: number; color: string; size?: number }) {
+  const r = (size - 10) / 2;
+  const circ = 2 * Math.PI * r;
+  const progress = total > 0 ? (value / total) * circ : 0;
+  return (
+    <Svg width={size} height={size}>
+      <Circle cx={size / 2} cy={size / 2} r={r} stroke={color + '22'} strokeWidth={7} fill="none" />
+      <Circle
+        cx={size / 2} cy={size / 2} r={r}
+        stroke={color} strokeWidth={7} fill="none"
+        strokeDasharray={`${progress} ${circ}`}
+        strokeLinecap="round"
+        rotation="-90" origin={`${size / 2}, ${size / 2}`}
+      />
+    </Svg>
+  );
+}
+
+// ── Leave type config ─────────────────────────────────────────────────────────
 const LEAVE_TYPES = [
-  { label: 'Annual Leave', iconName: 'sunny-outline' as const, total: currentUser.leaveBalance.annual, used: currentUser.leaveBalance.annual - currentUser.leaveBalance.remaining.annual, color: Colors.primary },
-  { label: 'Sick Leave', iconName: 'medical-outline' as const, total: currentUser.leaveBalance.sick, used: currentUser.leaveBalance.sick - currentUser.leaveBalance.remaining.sick, color: Colors.danger },
-  { label: 'Casual Leave', iconName: 'cafe-outline' as const, total: currentUser.leaveBalance.casual, used: currentUser.leaveBalance.casual - currentUser.leaveBalance.remaining.casual, color: Colors.accent },
+  {
+    label: 'Annual', icon: 'sunny-outline' as const,
+    total: currentUser.leaveBalance.annual,
+    remaining: currentUser.leaveBalance.remaining.annual,
+    color: Colors.primary,
+  },
+  {
+    label: 'Sick', icon: 'medical-outline' as const,
+    total: currentUser.leaveBalance.sick,
+    remaining: currentUser.leaveBalance.remaining.sick,
+    color: Colors.danger,
+  },
+  {
+    label: 'Casual', icon: 'cafe-outline' as const,
+    total: currentUser.leaveBalance.casual,
+    remaining: currentUser.leaveBalance.remaining.casual,
+    color: Colors.accent,
+  },
 ];
 
+const LEAVE_ICON: Record<string, 'medical-outline' | 'cafe-outline' | 'sunny-outline'> = {
+  'Sick Leave': 'medical-outline',
+  'Casual Leave': 'cafe-outline',
+};
+
+const FILTERS = ['all', 'pending', 'approved', 'rejected'] as const;
+
+function fmt(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString('en', { month: 'short', day: 'numeric' });
+}
+
+// ── Main Screen ───────────────────────────────────────────────────────────────
 export default function LeaveScreen() {
   const router = useRouter();
-  const [filterStatus, setFilterStatus] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
+  const [filter, setFilter] = useState<typeof FILTERS[number]>('all');
 
-  const filtered = filterStatus === 'all' ? mockLeaves : mockLeaves.filter(l => l.status === filterStatus);
+  const filtered = filter === 'all' ? mockLeaves : mockLeaves.filter(l => l.status === filter);
+
+  const totalRemaining =
+    currentUser.leaveBalance.remaining.annual +
+    currentUser.leaveBalance.remaining.sick +
+    currentUser.leaveBalance.remaining.casual;
 
   return (
-    <View style={styles.container}>
+    <View style={styles.root}>
       <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
 
-      <LinearGradient
-        colors={['#2563EB', '#1D4ED8']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.header}
-      >
-        {/* Title Row */}
-        <View style={styles.headerTitleRow}>
-          <View style={styles.headerIconBox}>
-            <Ionicons name="calendar-outline" size={20} color={Colors.white} />
+      {/* ── Header ── */}
+      <LinearGradient colors={['#56CCF2', '#4DA8DA', '#2E86B5']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.header}>
+        {/* decorative blobs */}
+        <View style={styles.blobTopRight} />
+        <View style={styles.blobBottomLeft} />
+
+        <View style={styles.headerTop}>
+          <View>
+            <Text style={styles.headerEyebrow}>LEAVE MANAGEMENT</Text>
+            <Text style={styles.headerTitle}>My Leaves</Text>
           </View>
-          <Text style={styles.headerTitle}>Leave Management</Text>
+          <TouchableOpacity style={styles.applyBtn} onPress={() => router.push('/leaves/apply')} activeOpacity={0.85}>
+            <Ionicons name="add" size={16} color={Colors.primary} />
+            <Text style={styles.applyBtnText}>Apply</Text>
+          </TouchableOpacity>
         </View>
 
-        {/* Subtitle */}
-        <Text style={styles.headerSub}>Manage your leave requests and balances</Text>
-
-        {/* Apply Leave Button */}
-        <TouchableOpacity
-          style={styles.applyBtn}
-          onPress={() => router.push('/leaves/apply')}
-          activeOpacity={0.85}
-        >
-          <Ionicons name="add" size={18} color={Colors.primary} />
-          <Text style={styles.applyBtnText}>Apply Leave</Text>
-        </TouchableOpacity>
-
-        {/* Balance Chips */}
-        <View style={styles.chipsRow}>
-          {[
-            { label: 'Annual', value: currentUser.leaveBalance.remaining.annual },
-            { label: 'Sick', value: currentUser.leaveBalance.remaining.sick },
-            { label: 'Casual', value: currentUser.leaveBalance.remaining.casual },
-          ].map((chip) => (
-            <View key={chip.label} style={styles.chip}>
-              <Text style={styles.chipValue}>{chip.value}</Text>
-              <Text style={styles.chipLabel}>{chip.label}</Text>
+        {/* Balance summary strip */}
+        <View style={styles.summaryStrip}>
+          <View style={styles.summaryMain}>
+            <Text style={styles.summaryValue}>{totalRemaining}</Text>
+            <Text style={styles.summaryLabel}>Days Available</Text>
+          </View>
+          <View style={styles.summaryDivider} />
+          {LEAVE_TYPES.map(lt => (
+            <View key={lt.label} style={styles.summaryItem}>
+              <View style={styles.summaryItemDot}>
+                <View style={[styles.summaryDot, { backgroundColor: Colors.white }]} />
+              </View>
+              <Text style={styles.summaryItemValue}>{lt.remaining}</Text>
+              <Text style={styles.summaryItemLabel}>{lt.label}</Text>
             </View>
           ))}
         </View>
@@ -72,204 +118,250 @@ export default function LeaveScreen() {
 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
 
-        {/* Leave Balance Cards */}
+        {/* ── Balance Cards ── */}
         <SectionHeader title="Leave Balance" />
         <View style={styles.balanceRow}>
-          {LEAVE_TYPES.map((lt) => {
-            const remaining = lt.total - lt.used;
-            const pct = (remaining / lt.total) * 100;
-            return (
-              <View key={lt.label} style={[styles.balanceCard, Shadow.sm]}>
-                <View style={[styles.balanceIconBox, { backgroundColor: lt.color + '15' }]}>
-                  <Ionicons name={lt.iconName} size={22} color={lt.color} />
-                </View>
-                <Text style={[styles.balanceValue, { color: lt.color }]}>{remaining}</Text>
-                <Text style={styles.balanceLabel}>{lt.label.split(' ')[0]}</Text>
-                <Text style={styles.balanceTotal}>of {lt.total} days</Text>
-                <View style={styles.balanceTrack}>
-                  <View style={[styles.balanceFill, { width: `${pct}%`, backgroundColor: lt.color }]} />
+          {LEAVE_TYPES.map(lt => (
+            <View key={lt.label} style={[styles.balanceCard, Shadow.sm]}>
+              <View style={styles.ringWrap}>
+                <RingProgress value={lt.remaining} total={lt.total} color={lt.color} size={62} />
+                <View style={styles.ringCenter}>
+                  <Ionicons name={lt.icon} size={16} color={lt.color} />
                 </View>
               </View>
-            );
-          })}
+              <Text style={[styles.balanceValue, { color: lt.color }]}>{lt.remaining}</Text>
+              <Text style={styles.balanceLabel}>{lt.label}</Text>
+              <Text style={styles.balanceOf}>{lt.total - lt.remaining} used</Text>
+            </View>
+          ))}
         </View>
 
-        {/* Upcoming Leaves */}
-        <Card style={{ backgroundColor: Colors.overlayLight }}>
-          <View style={styles.upcomingRow}>
-            <View style={styles.upcomingTitleRow}>
-              <Ionicons name="calendar-outline" size={16} color={Colors.primary} />
-              <Text style={styles.upcomingTitle}> Upcoming Leave</Text>
+        {/* ── Upcoming Leave ── */}
+        <View style={[styles.upcomingCard, Shadow.sm]}>
+          <View style={[styles.upcomingAccent, { backgroundColor: Colors.warning }]} />
+          <View style={styles.upcomingBody}>
+            <View style={styles.upcomingTop}>
+              <View style={styles.upcomingIconWrap}>
+                <Ionicons name="calendar" size={16} color={Colors.warning} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.upcomingType}>Upcoming Leave</Text>
+                <Text style={styles.upcomingDates}>Jun 10 – Jun 12, 2025</Text>
+              </View>
+              <Badge label="Pending" variant="warning" dot />
             </View>
-            <Badge label="Pending" variant="warning" />
+            <View style={styles.upcomingMeta}>
+              <View style={styles.metaPill}>
+                <Ionicons name="sunny-outline" size={11} color={Colors.primary} />
+                <Text style={styles.metaPillText}>Annual Leave</Text>
+              </View>
+              <View style={styles.metaPill}>
+                <Ionicons name="time-outline" size={11} color={Colors.gray500} />
+                <Text style={styles.metaPillText}>3 days</Text>
+              </View>
+              <View style={styles.metaPill}>
+                <Ionicons name="person-outline" size={11} color={Colors.gray500} />
+                <Text style={styles.metaPillText}>Family vacation</Text>
+              </View>
+            </View>
           </View>
-          <Text style={styles.upcomingDates}>Jun 10 – Jun 12, 2025 (3 days)</Text>
-          <Text style={styles.upcomingReason}>Family vacation — Annual Leave</Text>
-        </Card>
+        </View>
+
+        {/* ── History ── */}
+        <SectionHeader title="Leave History" />
 
         {/* Filter Tabs */}
-        <SectionHeader title="Leave History" />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterRow}>
-          {(['all', 'pending', 'approved', 'rejected'] as const).map(status => (
+          {FILTERS.map(f => (
             <TouchableOpacity
-              key={status}
-              style={[styles.filterTab, filterStatus === status && styles.filterTabActive]}
-              onPress={() => setFilterStatus(status)}
+              key={f}
+              style={[styles.filterTab, filter === f && styles.filterTabActive]}
+              onPress={() => setFilter(f)}
             >
-              <Text style={[styles.filterText, filterStatus === status && styles.filterTextActive]}>
-                {status.charAt(0).toUpperCase() + status.slice(1)}
+              {filter === f && <View style={styles.filterDot} />}
+              <Text style={[styles.filterText, filter === f && styles.filterTextActive]}>
+                {f.charAt(0).toUpperCase() + f.slice(1)}
               </Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
 
-        {/* Leave List */}
-        {filtered.map(leave => (
-          <Card key={leave.id} onPress={() => router.push('/leaves/apply')}>
-            <View style={styles.leaveHeader}>
-              <View style={styles.leaveIconBox}>
-                <Ionicons
-                  name={leave.type.includes('Sick') ? 'medical-outline' : leave.type.includes('Casual') ? 'cafe-outline' : 'sunny-outline'}
-                  size={20} color={Colors.primary}
-                />
-              </View>
-              <View style={styles.leaveInfo}>
-                <Text style={styles.leaveType}>{leave.type}</Text>
-                <Text style={styles.leaveDates}>
-                  {new Date(leave.from).toLocaleDateString('en', { month: 'short', day: 'numeric' })} –{' '}
-                  {new Date(leave.to).toLocaleDateString('en', { month: 'short', day: 'numeric', year: 'numeric' })}
-                </Text>
-                <Text style={styles.leaveDays}>{leave.days} day{leave.days > 1 ? 's' : ''}</Text>
-              </View>
-              <Badge label={leave.status} variant={statusToVariant[leave.status] || 'neutral'} />
-            </View>
-            <View style={styles.leaveReason}>
-              <Text style={styles.leaveReasonLabel}>Reason: </Text>
-              <Text style={styles.leaveReasonText}>{leave.reason}</Text>
-            </View>
-            <Text style={styles.leaveApplied}>Applied on: {leave.appliedOn}</Text>
-          </Card>
-        ))}
+        {/* Leave Cards */}
+        {filtered.map(leave => {
+          const iconName = LEAVE_ICON[leave.type] ?? 'sunny-outline';
+          const variant = statusToVariant[leave.status] ?? 'neutral';
+          const accentColor =
+            leave.status === 'approved' ? Colors.success :
+            leave.status === 'rejected' ? Colors.danger : Colors.warning;
+          return (
+            <TouchableOpacity key={leave.id} style={[styles.leaveCard, Shadow.sm]} onPress={() => router.push('/leaves/apply')} activeOpacity={0.85}>
+              <View style={[styles.leaveAccent, { backgroundColor: accentColor }]} />
+              <View style={styles.leaveBody}>
+                <View style={styles.leaveTop}>
+                  <View style={[styles.leaveIconBox, { backgroundColor: accentColor + '15' }]}>
+                    <Ionicons name={iconName} size={18} color={accentColor} />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.leaveType}>{leave.type}</Text>
+                    <Text style={styles.leaveReason} numberOfLines={1}>{leave.reason}</Text>
+                  </View>
+                  <Badge label={leave.status} variant={variant} dot />
+                </View>
 
-        <View style={{ height: 100 }} />
+                <View style={styles.leaveMeta}>
+                  <View style={styles.leaveDatePill}>
+                    <Ionicons name="calendar-outline" size={11} color={Colors.primary} />
+                    <Text style={styles.leaveDateText}>{fmt(leave.from)} – {fmt(leave.to)}</Text>
+                  </View>
+                  <View style={[styles.leaveDayPill, { backgroundColor: accentColor + '15' }]}>
+                    <Text style={[styles.leaveDayText, { color: accentColor }]}>{leave.days}d</Text>
+                  </View>
+                </View>
+
+                <Text style={styles.leaveApplied}>Applied {leave.appliedOn}</Text>
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+
+        <View style={{ height: 110 }} />
       </ScrollView>
     </View>
   );
 }
 
+// ── Styles ────────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.gray50 },
+  root: { flex: 1, backgroundColor: Colors.gray50 },
 
+  // Header
   header: {
-    paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 24) + 12 : 56,
+    paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ?? 24) + 12 : 58,
     paddingHorizontal: 20,
-    paddingBottom: 20,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
+    paddingBottom: 22,
+    borderBottomLeftRadius: 28,
+    borderBottomRightRadius: 28,
     overflow: 'hidden',
   },
-  headerTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    marginBottom: 6,
+  blobTopRight: {
+    position: 'absolute', top: -40, right: -40,
+    width: 160, height: 160, borderRadius: 80,
+    backgroundColor: 'rgba(255,255,255,0.07)',
   },
-  headerIconBox: {
-    width: 36, height: 36, borderRadius: 10,
-    backgroundColor: 'rgba(255,255,255,0.18)',
-    alignItems: 'center', justifyContent: 'center',
+  blobBottomLeft: {
+    position: 'absolute', bottom: -30, left: -30,
+    width: 120, height: 120, borderRadius: 60,
+    backgroundColor: 'rgba(255,255,255,0.05)',
   },
-  headerTitle: {
-    fontSize: Typography.fontSize.md,
-    fontWeight: '800',
-    color: Colors.white,
-    letterSpacing: -0.3,
-  },
-  headerSub: {
-    fontSize: Typography.fontSize.xs,
-    color: 'rgba(255,255,255,0.7)',
-    marginBottom: 14,
-    marginLeft: 46,
-  },
+  headerTop: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 18 },
+  headerEyebrow: { fontSize: 10, fontWeight: '700', color: 'rgba(255,255,255,0.6)', letterSpacing: 1.5, marginBottom: 3 },
+  headerTitle: { fontSize: Typography.fontSize['2xl'], fontWeight: '800', color: Colors.white, letterSpacing: -0.5 },
   applyBtn: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    alignSelf: 'flex-start',
+    flexDirection: 'row', alignItems: 'center', gap: 5,
     backgroundColor: Colors.white, borderRadius: Radius.full,
-    paddingHorizontal: 20, height: 48,
-    gap: 6, ...Shadow.md, marginBottom: 16,
+    paddingHorizontal: 16, paddingVertical: 10, ...Shadow.md,
   },
   applyBtnText: { fontSize: Typography.fontSize.sm, fontWeight: '700', color: Colors.primary },
-  chipsRow: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  chip: {
-    flex: 1,
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    borderRadius: 12,
-    paddingVertical: 10,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.2)',
-  },
-  chipValue: {
-    fontSize: Typography.fontSize.lg,
-    fontWeight: '800',
-    color: Colors.white,
-    lineHeight: 22,
-  },
-  chipLabel: {
-    fontSize: Typography.fontSize.xs,
-    color: 'rgba(255,255,255,0.75)',
-    fontWeight: '500',
-    marginTop: 1,
-  },
 
+  // Summary strip
+  summaryStrip: {
+    flexDirection: 'row', alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.12)',
+    borderRadius: Radius.lg, paddingVertical: 14, paddingHorizontal: 16,
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.18)',
+    gap: 0,
+  },
+  summaryMain: { alignItems: 'center', marginRight: 16 },
+  summaryValue: { fontSize: Typography.fontSize['2xl'], fontWeight: '800', color: Colors.white, lineHeight: 28 },
+  summaryLabel: { fontSize: 10, color: 'rgba(255,255,255,0.75)', textAlign: 'center', marginTop: 2, fontWeight: '500' },
+  summaryDivider: { width: 1, height: 36, backgroundColor: 'rgba(255,255,255,0.3)', marginRight: 16 },
+  summaryItem: { flex: 1, alignItems: 'center' },
+  summaryItemDot: { marginBottom: 3 },
+  summaryDot: { width: 5, height: 5, borderRadius: 3 },
+  summaryItemValue: { fontSize: Typography.fontSize.lg, fontWeight: '800', color: Colors.white, lineHeight: 22 },
+  summaryItemLabel: { fontSize: 10, color: 'rgba(255,255,255,0.75)', marginTop: 2, fontWeight: '600' },
+
+  // Scroll
   scroll: { flex: 1 },
-  scrollContent: { padding: Spacing[4] },
+  scrollContent: { paddingHorizontal: 16, paddingTop: 16 },
 
-  balanceRow: { flexDirection: 'row', gap: Spacing[3], marginBottom: Spacing[4] },
+  // Balance Cards
+  balanceRow: { flexDirection: 'row', gap: 10, marginBottom: 16 },
   balanceCard: {
     flex: 1, backgroundColor: Colors.white,
-    borderRadius: Radius.lg, padding: Spacing[3],
+    borderRadius: Radius.lg, paddingVertical: 16,
     alignItems: 'center',
+    borderWidth: 1, borderColor: Colors.gray100,
   },
-  balanceIconBox: { width: 42, height: 42, borderRadius: Radius.md, alignItems: 'center', justifyContent: 'center', marginBottom: 6 },
-  balanceValue: { fontSize: Typography.fontSize['2xl'], fontWeight: '800' },
+  ringWrap: { position: 'relative', alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
+  ringCenter: { position: 'absolute', alignItems: 'center', justifyContent: 'center' },
+  balanceValue: { fontSize: Typography.fontSize.xl, fontWeight: '800', lineHeight: 24 },
   balanceLabel: { fontSize: Typography.fontSize.xs, color: Colors.gray700, fontWeight: '600', marginTop: 2 },
-  balanceTotal: { fontSize: Typography.fontSize.xs, color: Colors.gray400, marginBottom: 8 },
-  balanceTrack: { width: '100%', height: 4, backgroundColor: Colors.gray200, borderRadius: 2, overflow: 'hidden' },
-  balanceFill: { height: 4, borderRadius: 2 },
+  balanceOf: { fontSize: 10, color: Colors.gray400, marginTop: 1 },
 
-  upcomingRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
-  upcomingTitleRow: { flexDirection: 'row', alignItems: 'center' },
-  upcomingTitle: { fontSize: Typography.fontSize.base, fontWeight: '700', color: Colors.primary },
-  upcomingDates: { fontSize: Typography.fontSize.sm, fontWeight: '600', color: Colors.gray900, marginBottom: 4 },
-  upcomingReason: { fontSize: Typography.fontSize.xs, color: Colors.gray500 },
+  // Upcoming Card
+  upcomingCard: {
+    flexDirection: 'row',
+    backgroundColor: Colors.white,
+    borderRadius: Radius.lg,
+    marginBottom: 16,
+    overflow: 'hidden',
+    borderWidth: 1, borderColor: Colors.gray100,
+  },
+  upcomingAccent: { width: 4 },
+  upcomingBody: { flex: 1, padding: 14 },
+  upcomingTop: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, marginBottom: 10 },
+  upcomingIconWrap: {
+    width: 32, height: 32, borderRadius: 10,
+    backgroundColor: Colors.warningLight,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  upcomingType: { fontSize: Typography.fontSize.sm, fontWeight: '700', color: Colors.gray900 },
+  upcomingDates: { fontSize: Typography.fontSize.xs, color: Colors.gray500, marginTop: 1 },
+  upcomingMeta: { flexDirection: 'row', gap: 6, flexWrap: 'wrap' },
+  metaPill: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    backgroundColor: Colors.gray100, borderRadius: Radius.full,
+    paddingHorizontal: 8, paddingVertical: 4,
+  },
+  metaPillText: { fontSize: 10, color: Colors.gray600, fontWeight: '500' },
 
-  filterRow: { marginBottom: Spacing[3] },
+  // Filter
+  filterRow: { marginBottom: 12 },
   filterTab: {
-    paddingHorizontal: 16, paddingVertical: 7,
+    flexDirection: 'row', alignItems: 'center', gap: 5,
+    paddingHorizontal: 16, paddingVertical: 8,
     borderRadius: Radius.full, marginRight: 8,
-    backgroundColor: Colors.white, borderWidth: 1, borderColor: Colors.gray200,
+    backgroundColor: Colors.white,
+    borderWidth: 1, borderColor: Colors.gray200,
   },
   filterTabActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
+  filterDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.8)' },
   filterText: { fontSize: Typography.fontSize.sm, color: Colors.gray600, fontWeight: '600' },
   filterTextActive: { color: Colors.white },
 
-  leaveHeader: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 10 },
-  leaveIconBox: {
-    width: 40, height: 40, borderRadius: Radius.md,
-    backgroundColor: Colors.overlayLight, alignItems: 'center',
-    justifyContent: 'center', marginRight: 12,
+  // Leave Card
+  leaveCard: {
+    flexDirection: 'row',
+    backgroundColor: Colors.white,
+    borderRadius: Radius.lg, marginBottom: 10,
+    overflow: 'hidden',
+    borderWidth: 1, borderColor: Colors.gray100,
   },
-
-  leaveInfo: { flex: 1 },
+  leaveAccent: { width: 4 },
+  leaveBody: { flex: 1, padding: 14 },
+  leaveTop: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 10 },
+  leaveIconBox: { width: 38, height: 38, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   leaveType: { fontSize: Typography.fontSize.base, fontWeight: '700', color: Colors.gray900 },
-  leaveDates: { fontSize: Typography.fontSize.xs, color: Colors.gray500, marginTop: 2 },
-  leaveDays: { fontSize: Typography.fontSize.xs, color: Colors.primary, fontWeight: '600', marginTop: 1 },
-  leaveReason: { flexDirection: 'row', marginBottom: 4 },
-  leaveReasonLabel: { fontSize: Typography.fontSize.xs, color: Colors.gray500 },
-  leaveReasonText: { flex: 1, fontSize: Typography.fontSize.xs, color: Colors.gray700 },
-  leaveApplied: { fontSize: Typography.fontSize.xs, color: Colors.gray400 },
+  leaveReason: { fontSize: Typography.fontSize.xs, color: Colors.gray400, marginTop: 1 },
+  leaveMeta: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
+  leaveDatePill: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    backgroundColor: Colors.overlayLight, borderRadius: Radius.full,
+    paddingHorizontal: 10, paddingVertical: 4,
+  },
+  leaveDateText: { fontSize: 10, color: Colors.primary, fontWeight: '600' },
+  leaveDayPill: { borderRadius: Radius.full, paddingHorizontal: 10, paddingVertical: 4 },
+  leaveDayText: { fontSize: 10, fontWeight: '700' },
+  leaveApplied: { fontSize: 10, color: Colors.gray400 },
 });

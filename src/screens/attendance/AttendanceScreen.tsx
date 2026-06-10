@@ -96,11 +96,23 @@ export default function AttendanceScreen() {
 
         {/* Monthly KPIs */}
         <SectionHeader title="June 2025" />
-        <View style={styles.kpiRow}>
-          <KPIWidget label="Present" value="18" icon={<Ionicons name="checkmark-circle-outline" size={18} color={Colors.success} />} iconBg={Colors.successLight} />
-          <KPIWidget label="Absent" value="1" icon={<Ionicons name="close-circle-outline" size={18} color={Colors.danger} />} iconBg={Colors.dangerLight} />
-          <KPIWidget label="Late" value="2" icon={<Ionicons name="alarm-outline" size={18} color={Colors.warning} />} iconBg={Colors.warningLight} />
-          <KPIWidget label="WFH" value="3" icon={<Ionicons name="home-outline" size={18} color={Colors.accent} />} iconBg={Colors.infoLight} />
+        <View style={styles.kpiGrid}>
+          {[
+            { label: 'Present', value: '18', icon: 'checkmark-circle-outline', color: Colors.success, bg: Colors.successLight },
+            { label: 'Absent',  value: '1',  icon: 'close-circle-outline',     color: Colors.danger,  bg: Colors.dangerLight },
+            { label: 'Late',    value: '2',  icon: 'alarm-outline',             color: Colors.warning, bg: Colors.warningLight },
+            { label: 'WFH',     value: '3',  icon: 'home-outline',              color: Colors.accent,  bg: Colors.infoLight },
+          ].map(({ label, value, icon, color, bg }) => (
+            <View key={label} style={styles.kpiCell}>
+              <View style={[styles.kpiIcon, { backgroundColor: bg }]}>
+                <Ionicons name={icon as any} size={18} color={color} />
+              </View>
+              <View>
+                <Text style={styles.kpiValue}>{value}</Text>
+                <Text style={styles.kpiLabel}>{label}</Text>
+              </View>
+            </View>
+          ))}
         </View>
 
         {/* Working Hours Card */}
@@ -190,7 +202,7 @@ const styles = StyleSheet.create({
   },
   headerBg: {
     position: 'absolute', width: 260, height: 260, borderRadius: 130,
-    backgroundColor: 'rgba(96,165,250,0.12)', top: -80, right: -50,
+    backgroundColor: 'rgba(255,255,255,0.10)', top: -80, right: -50,
   },
   headerTop: {
     flexDirection: 'row', justifyContent: 'space-between',
@@ -235,7 +247,17 @@ const styles = StyleSheet.create({
   legendDot: { width: 8, height: 8, borderRadius: 4 },
   legendText: { fontSize: Typography.fontSize.xs, color: Colors.gray500 },
 
-  kpiRow: { flexDirection: 'row', marginBottom: Spacing[3] },
+  kpiGrid: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: Spacing[3], gap: 8 },
+  kpiCell: {
+    width: '48%', flexGrow: 1,
+    backgroundColor: Colors.white, borderRadius: Radius.lg,
+    padding: Spacing[3], flexDirection: 'row', alignItems: 'center',
+    gap: 10, borderWidth: 1, borderColor: Colors.gray100, ...Shadow.sm,
+  },
+  kpiIcon: { width: 40, height: 40, borderRadius: Radius.md, alignItems: 'center', justifyContent: 'center' },
+  kpiValue: { fontSize: Typography.fontSize.lg, fontWeight: '800', color: Colors.gray900 },
+  kpiLabel: { fontSize: Typography.fontSize.xs, color: Colors.gray500, marginTop: 2 },
+
 
   hoursRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
   hoursInfo: { width: 110 },

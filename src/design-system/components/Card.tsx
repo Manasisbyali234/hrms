@@ -47,11 +47,13 @@ interface KPIWidgetProps {
 export const KPIWidget: React.FC<KPIWidgetProps> = ({
   label, value, icon, iconBg = Colors.overlayLight, sub, onPress, style,
 }) => (
-  <TouchableOpacity onPress={onPress} activeOpacity={0.85} style={[styles.kpiCard, Shadow.sm, style]}>
+  <TouchableOpacity onPress={onPress} activeOpacity={0.85} style={[styles.kpiCard, Shadow.sm, !style && { flex: 1 }, style]}>
     <View style={[styles.kpiIcon, { backgroundColor: iconBg }]}>{icon}</View>
-    <Text style={styles.kpiValue}>{value}</Text>
-    <Text style={styles.kpiLabel}>{label}</Text>
-    {sub && <Text style={styles.kpiSub}>{sub}</Text>}
+    <View style={styles.kpiText}>
+      <Text style={styles.kpiValue}>{value}</Text>
+      <Text style={styles.kpiLabel} numberOfLines={1}>{label}</Text>
+      {sub && <Text style={styles.kpiSub}>{sub}</Text>}
+    </View>
   </TouchableOpacity>
 );
 
@@ -138,37 +140,39 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     borderRadius: Radius.lg,
     padding: Spacing[3],
+    flexDirection: 'row',
     alignItems: 'center',
-    flex: 1,
     margin: 4,
-    minWidth: 76,
     borderWidth: 1,
     borderColor: Colors.gray100,
+    gap: 10,
   },
   kpiIcon: {
-    width: 40,
-    height: 40,
+    width: 42,
+    height: 42,
     borderRadius: Radius.md,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 6,
+    flexShrink: 0,
+  },
+  kpiText: {
+    flex: 1,
   },
   kpiValue: {
-    fontSize: Typography.fontSize['2xl'],
-    fontWeight: '700',
+    fontSize: Typography.fontSize.lg,
+    fontWeight: '800',
     color: Colors.gray900,
-    lineHeight: 30,
+    lineHeight: 22,
   },
   kpiLabel: {
     fontSize: Typography.fontSize.xs,
     color: Colors.gray500,
     marginTop: 2,
-    textAlign: 'center',
   },
   kpiSub: {
     fontSize: Typography.fontSize.xs,
     color: Colors.primary,
-    marginTop: 2,
+    marginTop: 1,
     fontWeight: '600',
   },
   sectionHeader: {

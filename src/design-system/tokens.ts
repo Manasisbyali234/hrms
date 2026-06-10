@@ -1,67 +1,67 @@
 // MetroMindz HRMS — Design Tokens
 export const Colors = {
-  // Primary Brand
-  primary: '#2563EB',
-  primaryLight: '#60A5FA',
-  primaryDark: '#1E40AF',
-  primaryGradientStart: '#2563EB',
-  primaryGradientEnd: '#60A5FA',
+  // Primary Brand — smooth sky blue
+  primary: '#4DA8DA',
+  primaryLight: '#82C4E8',
+  primaryDark: '#2E86B5',
+  primaryGradientStart: '#56CCF2',
+  primaryGradientEnd: '#4DA8DA',
 
-  // Accent
-  accent: '#3B82F6',
-  accentLight: '#BFDBFE',
+  // Accent — soft cyan
+  accent: '#56CCF2',
+  accentLight: '#B3E8F8',
 
   // Semantic
-  success: '#10B981',
+  success: '#34D399',
   successLight: '#D1FAE5',
-  successDark: '#065F46',
+  successDark: '#059669',
 
-  warning: '#F59E0B',
+  warning: '#FBBF24',
   warningLight: '#FEF3C7',
-  warningDark: '#92400E',
+  warningDark: '#D97706',
 
-  danger: '#EF4444',
+  danger: '#F87171',
   dangerLight: '#FEE2E2',
-  dangerDark: '#991B1B',
+  dangerDark: '#DC2626',
 
-  info: '#3B82F6',
-  infoLight: '#EFF6FF',
+  info: '#56CCF2',
+  infoLight: '#E8F7FD',
 
-  // Neutrals
+  // Neutrals — light blue-tinted whites
   white: '#FFFFFF',
-  black: '#000000',
-  gray50:  '#F8FAFC',
-  gray100: '#F1F5F9',
-  gray200: '#E2E8F0',
-  gray300: '#CBD5E1',
-  gray400: '#94A3B8',
-  gray500: '#64748B',
-  gray600: '#475569',
-  gray700: '#334155',
-  gray800: '#1E293B',
-  gray900: '#1F2937',
+  black: '#1A2A3A',
+  gray50:  '#F0F8FF',
+  gray100: '#E1F0FA',
+  gray200: '#C8E4F5',
+  gray300: '#A0C8E8',
+  gray400: '#78AECF',
+  gray500: '#5590B5',
+  gray600: '#3A7399',
+  gray700: '#255878',
+  gray800: '#163E57',
+  gray900: '#0D2638',
 
   // Background
-  background: '#F8FAFC',
+  background: '#EEF6FC',
   cardBg: '#FFFFFF',
 
-  // Dark mode background
-  dark: '#0F172A',
-  darkCard: '#1E293B',
-  darkBorder: '#334155',
+  // kept for compat
+  dark: '#1B4F72',
+  darkCard: '#1F618D',
+  darkBorder: '#2E86C1',
 
   // Special
-  checkIn: '#10B981',
-  checkOut: '#EF4444',
-  overlay: 'rgba(0,0,0,0.5)',
-  overlayLight: 'rgba(37,99,235,0.08)',
+  checkIn: '#34D399',
+  checkOut: '#F87171',
+  overlay: 'rgba(77,168,218,0.4)',
+  overlayLight: 'rgba(77,168,218,0.08)',
 
   // Status
-  active: '#10B981',
-  pending: '#F59E0B',
-  rejected: '#EF4444',
-  approved: '#10B981',
-  draft: '#64748B',
+  active: '#34D399',
+  pending: '#FBBF24',
+  rejected: '#F87171',
+  approved: '#34D399',
+  draft: '#78AECF',
 };
 
 export const Typography = {
@@ -117,23 +117,23 @@ export const Radius = {
 
 export const Shadow = {
   sm: {
-    shadowColor: '#1E293B',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
+    shadowColor: '#4DA8DA',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
     elevation: 2,
   },
   md: {
-    shadowColor: '#2563EB',
+    shadowColor: '#4DA8DA',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.10,
-    shadowRadius: 12,
+    shadowOpacity: 0.14,
+    shadowRadius: 14,
     elevation: 5,
   },
   lg: {
-    shadowColor: '#1E40AF',
+    shadowColor: '#2E86B5',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
+    shadowOpacity: 0.18,
     shadowRadius: 24,
     elevation: 10,
   },
