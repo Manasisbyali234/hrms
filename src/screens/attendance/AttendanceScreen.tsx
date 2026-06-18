@@ -191,7 +191,7 @@ export default function AttendanceScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.gray50 },
+  container: { flex: 1, backgroundColor: Colors.white },
 
   header: {
     backgroundColor: Colors.primary,

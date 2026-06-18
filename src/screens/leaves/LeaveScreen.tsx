@@ -232,7 +232,7 @@ export default function LeaveScreen() {
 
 // ── Styles ────────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.gray50 },
+  root: { flex: 1, backgroundColor: Colors.white },
 
   // Header
   header: {

@@ -126,7 +126,7 @@ export default function SettingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.gray50 },
+  container: { flex: 1, backgroundColor: Colors.white },
   header: { backgroundColor: Colors.white, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 24) + 12 : 56, paddingHorizontal: Spacing[4], paddingBottom: 16, flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: Colors.gray100 },
   backBtn: { marginRight: 16, padding: 4 },
   headerTitle: { fontSize: Typography.fontSize.md, fontWeight: '700', color: Colors.gray900 },

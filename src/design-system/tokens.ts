@@ -115,28 +115,39 @@ export const Radius = {
   full: 9999,
 };
 
+import { Platform } from 'react-native';
+
 export const Shadow = {
-  sm: {
-    shadowColor: '#4DA8DA',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 2,
-  },
-  md: {
-    shadowColor: '#4DA8DA',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.14,
-    shadowRadius: 14,
-    elevation: 5,
-  },
-  lg: {
-    shadowColor: '#2E86B5',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.18,
-    shadowRadius: 24,
-    elevation: 10,
-  },
+  sm: Platform.select({
+    web: { boxShadow: '0px 2px 6px rgba(77,168,218,0.08)' },
+    default: {
+      shadowColor: '#4DA8DA',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.08,
+      shadowRadius: 6,
+      elevation: 2,
+    },
+  }),
+  md: Platform.select({
+    web: { boxShadow: '0px 4px 14px rgba(77,168,218,0.14)' },
+    default: {
+      shadowColor: '#4DA8DA',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.14,
+      shadowRadius: 14,
+      elevation: 5,
+    },
+  }),
+  lg: Platform.select({
+    web: { boxShadow: '0px 8px 24px rgba(46,134,181,0.18)' },
+    default: {
+      shadowColor: '#2E86B5',
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.18,
+      shadowRadius: 24,
+      elevation: 10,
+    },
+  }),
 };
 
 export const BOTTOM_NAV_HEIGHT = 68;

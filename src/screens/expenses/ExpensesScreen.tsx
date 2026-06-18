@@ -122,7 +122,7 @@ export default function ExpensesScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.gray50 },
+  container: { flex: 1, backgroundColor: Colors.white },
   header: {
     backgroundColor: Colors.primary,
     paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 24) + 12 : 56,

@@ -22,6 +22,8 @@ export default function RootLayout() {
       <Stack.Screen name="payroll/index" />
       <Stack.Screen name="leaves/apply" />
       <Stack.Screen name="settings/index" />
+      <Stack.Screen name="leads/index" />
+      <Stack.Screen name="leads/add" />
     </Stack>
   );
 }

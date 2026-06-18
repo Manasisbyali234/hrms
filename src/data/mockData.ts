@@ -138,12 +138,13 @@ export const mockProjects = [
 ];
 
 export const mockTasks = [
-  { id: 'T001', title: 'Design Authentication Screens', project: 'HRMS Mobile App', status: 'completed', priority: 'high', dueDate: '2025-06-05', assignee: 'VM', progress: 100 },
-  { id: 'T002', title: 'Build Dashboard Components', project: 'HRMS Mobile App', status: 'in-progress', priority: 'high', dueDate: '2025-06-10', assignee: 'VM', progress: 65 },
-  { id: 'T003', title: 'Implement Attendance Module', project: 'HRMS Mobile App', status: 'in-progress', priority: 'high', dueDate: '2025-06-15', assignee: 'VM', progress: 30 },
-  { id: 'T004', title: 'Integrate Leave Management API', project: 'MMNext Platform', status: 'todo', priority: 'medium', dueDate: '2025-06-20', assignee: 'VM', progress: 0 },
-  { id: 'T005', title: 'Fix Payroll Calculation Bug', project: 'MMNext Platform', status: 'todo', priority: 'high', dueDate: '2025-06-08', assignee: 'VM', progress: 0 },
-  { id: 'T006', title: 'Write Unit Tests for Auth Module', project: 'MMNext Platform', status: 'todo', priority: 'low', dueDate: '2025-06-25', assignee: 'VM', progress: 0 },
+  { id: 'T001', title: 'Design Authentication Screens', project: 'HRMS Mobile App', status: 'completed', priority: 'high', dueDate: '2025-06-05', assignee: 'VM', assigneeName: 'Venil Mottana', progress: 100, startDate: '2025-05-20', endDate: '2025-06-05', timeSpent: { days: 3, hours: 5, minutes: 20 } },
+  { id: 'T002', title: 'Build Dashboard Components', project: 'HRMS Mobile App', status: 'in-progress', priority: 'high', dueDate: '2025-06-10', assignee: 'VM', assigneeName: 'Venil Mottana', progress: 65, startDate: '2025-06-01', endDate: '2025-06-10', timeSpent: { days: 2, hours: 3, minutes: 45 } },
+  { id: 'T003', title: 'Implement Attendance Module', project: 'HRMS Mobile App', status: 'in-progress', priority: 'high', dueDate: '2025-06-15', assignee: 'VM', assigneeName: 'Venil Mottana', progress: 30, startDate: '2025-06-05', endDate: '2025-06-15', timeSpent: { days: 1, hours: 2, minutes: 10 } },
+  { id: 'T004', title: 'Integrate Leave Management API', project: 'MMNext Platform', status: 'todo', priority: 'medium', dueDate: '2025-06-20', assignee: null, assigneeName: null, progress: 0, startDate: '2025-06-12', endDate: '2025-06-20', timeSpent: { days: 0, hours: 0, minutes: 0 } },
+  { id: 'T005', title: 'Fix Payroll Calculation Bug', project: 'MMNext Platform', status: 'todo', priority: 'high', dueDate: '2025-06-08', assignee: 'VM', assigneeName: 'Venil Mottana', progress: 0, startDate: '2025-06-06', endDate: '2025-06-08', timeSpent: { days: 0, hours: 0, minutes: 0 } },
+  { id: 'T006', title: 'Write Unit Tests for Auth Module', project: 'MMNext Platform', status: 'todo', priority: 'low', dueDate: '2025-06-25', assignee: null, assigneeName: null, progress: 0, startDate: '2025-06-18', endDate: '2025-06-25', timeSpent: { days: 0, hours: 0, minutes: 0 } },
+  { id: 'T007', title: 'UI Review & QA Testing', project: 'HRMS Mobile App', status: 'paused', priority: 'medium', dueDate: '2025-06-18', assignee: 'VM', assigneeName: 'Venil Mottana', progress: 50, startDate: '2025-06-08', endDate: '2025-06-18', timeSpent: { days: 1, hours: 4, minutes: 30 } },
 ];
 
 export const mockExpenses = [
@@ -187,12 +188,27 @@ export const mockPayslips = [
   { id: 'PAY-2025-01', month: 'January 2025', grossSalary: 125000, netSalary: 98450, deductions: 26550, status: 'paid', paidOn: '2025-01-31' },
 ];
 
-export const mockLeads = [
-  { id: 'LD001', title: 'TechCorp Enterprise Deal', company: 'TechCorp Ltd.', value: '₹12,00,000', status: 'negotiation', assignee: 'VM', lastActivity: '2 hours ago', probability: 75 },
-  { id: 'LD002', title: 'StartupXYZ HRMS Package', company: 'StartupXYZ', value: '₹3,50,000', status: 'proposal', assignee: 'RS', lastActivity: 'Yesterday', probability: 45 },
-  { id: 'LD003', title: 'GlobalMart Analytics', company: 'GlobalMart Inc.', value: '₹8,00,000', status: 'qualified', assignee: 'VM', lastActivity: '3 days ago', probability: 60 },
-  { id: 'LD004', title: 'NewClient Onboarding', company: 'Fresh Ventures', value: '₹1,80,000', status: 'new', assignee: 'AM', lastActivity: 'Jun 1', probability: 20 },
+export const mockLeads: Lead[] = [
+  { id: 'LD001', fullName: 'Arjun Mehta', mobile: '+91 98000 11111', email: 'arjun@techcorp.com', leadType: 'Enterprise', status: 'Negotiation', assignedTo: 'Venil Mottana', followUpType: 'Call', followUpDate: '2025-06-12 10:00', leadSource: 'Website', notes: 'Interested in full HRMS suite', createdAt: '2025-06-01' },
+  { id: 'LD002', fullName: 'Sneha Rao', mobile: '+91 98000 22222', email: 'sneha@startupxyz.com', leadType: 'SME', status: 'Proposal', assignedTo: 'Rahul Sharma', followUpType: 'Email', followUpDate: '2025-06-14 14:00', leadSource: 'Referral', notes: 'Needs payroll module', createdAt: '2025-06-02' },
+  { id: 'LD003', fullName: 'Karan Desai', mobile: '+91 98000 33333', email: 'karan@globalmart.com', leadType: 'Enterprise', status: 'Qualified', assignedTo: 'Venil Mottana', followUpType: 'Meeting', followUpDate: '2025-06-15 11:00', leadSource: 'LinkedIn', notes: 'Analytics dashboard requirement', createdAt: '2025-06-03' },
+  { id: 'LD004', fullName: 'Pooja Singh', mobile: '+91 98000 44444', email: 'pooja@freshventures.com', leadType: 'Startup', status: 'New', assignedTo: 'Anita Mehta', followUpType: 'WhatsApp', followUpDate: '2025-06-16 09:00', leadSource: 'Cold Call', notes: 'Early stage, exploring options', createdAt: '2025-06-04' },
 ];
+
+export interface Lead {
+  id: string;
+  fullName: string;
+  mobile: string;
+  email: string;
+  leadType: string;
+  status: string;
+  assignedTo: string;
+  followUpType: string;
+  followUpDate: string;
+  leadSource: string;
+  notes: string;
+  createdAt: string;
+}
 
 export const mockAssets = [
   { id: 'DA001', name: 'Company Logo Pack', type: 'image', size: '4.2 MB', format: 'ZIP', category: 'Brand', updatedAt: '2025-05-20' },

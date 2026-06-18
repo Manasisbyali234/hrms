@@ -122,7 +122,7 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.gray50 },
+  container: { flex: 1, backgroundColor: Colors.white },
   scroll: { flex: 1 },
   hero: { backgroundColor: Colors.primary, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 24) + 12 : 56, paddingHorizontal: Spacing[4], paddingBottom: 40, alignItems: 'center', overflow: 'hidden' },
   heroBg: { ...StyleSheet.absoluteFillObject, backgroundColor: Colors.primary },

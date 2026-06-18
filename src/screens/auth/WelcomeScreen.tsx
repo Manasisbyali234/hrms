@@ -97,9 +97,6 @@ export default function WelcomeScreen() {
 
           <Text style={styles.heroTitle}>MetroMindz HRMS</Text>
           <Text style={styles.heroSubtitle}>Smart Workforce Management Platform</Text>
-          <Text style={styles.heroDesc}>
-            Manage attendance, payroll, collaboration, projects and employee engagement from one place.
-          </Text>
         </Animated.View>
 
         {/* curved bottom */}
@@ -148,14 +145,18 @@ export default function WelcomeScreen() {
 const HERO_H = height * 0.42;
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#EEF6FC' },
+  root: { flex: 1, backgroundColor: '#fff' },
+
+  // Top Banner
+  topBanner: { paddingTop: Platform.OS === 'android' ? 28 : 44, paddingBottom: 8, alignItems: 'center', justifyContent: 'center' },
+  bannerText: { fontSize: 13, fontWeight: '600', color: '#fff', letterSpacing: 0.3 },
 
   // Hero
   hero: { height: HERO_H, overflow: 'hidden' },
   blob1: { position: 'absolute', width: 320, height: 320, borderRadius: 160, backgroundColor: 'rgba(255,255,255,0.10)', top: -100, right: -80 },
   blob2: { position: 'absolute', width: 180, height: 180, borderRadius: 90,  backgroundColor: 'rgba(255,255,255,0.07)', bottom: 20, left: -50 },
 
-  heroContent: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24, paddingTop: Platform.OS === 'android' ? 32 : 48, paddingBottom: 48 },
+  heroContent: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24, paddingTop: 16, paddingBottom: 48 },
 
   badge: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255,255,255,0.18)', borderRadius: 999, paddingVertical: 5, paddingHorizontal: 14, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)' },
   badgeDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#34D399' },
@@ -179,13 +180,13 @@ const styles = StyleSheet.create({
   // curved separator
   curve: {
     position: 'absolute', bottom: -1, left: 0, right: 0, height: 36,
-    backgroundColor: '#EEF6FC',
+    backgroundColor: '#fff',
     borderTopLeftRadius: 32, borderTopRightRadius: 32,
   },
 
   // Sheet
   sheet: { flex: 1, marginTop: -32 },
-  sheetContent: { paddingHorizontal: 20, paddingTop: 28, paddingBottom: 40, backgroundColor: '#EEF6FC' },
+  sheetContent: { paddingHorizontal: 20, paddingTop: 28, paddingBottom: 40, backgroundColor: '#fff' },
 
   sectionTitle: { fontSize: 22, fontWeight: '700', color: '#163E57', marginBottom: 4, letterSpacing: -0.3 },
   sectionSub:   { fontSize: 13, color: '#5590B5', marginBottom: 20 },

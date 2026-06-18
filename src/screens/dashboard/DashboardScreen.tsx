@@ -22,6 +22,7 @@ const QUICK_ACTIONS = [
   { icon: 'people-outline' as const,            label: 'Directory',   color: '#56CCF2', bg: '#E8F7FD', route: '/employees' },
   { icon: 'bar-chart-outline' as const,         label: 'Payroll',     color: '#F87171', bg: '#FEE2E2', route: '/payroll' },
   { icon: 'chatbubbles-outline' as const,       label: 'Chat',        color: '#2E86B5', bg: '#C8E4F5', route: '/(tabs)/chat' },
+  { icon: 'person-add-outline' as const,        label: 'Add Lead',    color: '#34D399', bg: '#D1FAE5', route: '/leads/add' },
 ];
 
 const STATS = (pendingTasks: number, activeProjects: number, leaveBalance: number, attendance: string) => [
@@ -55,7 +56,6 @@ export default function DashboardScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const elapsedTime = useElapsedTimer();
   const scrollViewRef = useRef<ScrollView>(null);
-  const myTasksY = useRef(0);
   const onRefresh = () => { setRefreshing(true); setTimeout(() => setRefreshing(false), 1200); };
   const unreadCount = mockNotifications.filter(n => !n.read).length;
   const today = mockAttendance[0];
@@ -153,85 +153,6 @@ export default function DashboardScreen() {
           ))}
         </View>
 
-        {/* My Tasks */}
-        <View
-          style={s.sectionRow}
-          onLayout={(e) => { myTasksY.current = e.nativeEvent.layout.y; }}
-        >
-          <Text style={s.sectionTitle}>My Tasks</Text>
-          <TouchableOpacity onPress={() => router.push('/(tabs)/tasks')}><Text style={s.seeAll}>View All</Text></TouchableOpacity>
-        </View>
-        {mockTasks.filter(t => t.status !== 'completed').slice(0, 3).map(task => (
-          <TouchableOpacity key={task.id} style={s.taskCard} onPress={() => router.push(`/tasks/${task.id}` as any)} activeOpacity={0.82}>
-            <View style={s.taskTop}>
-              <View style={[s.taskPriorityDot, {
-                backgroundColor: task.priority === 'high' ? Colors.danger : task.priority === 'medium' ? Colors.warning : Colors.gray400
-              }]} />
-              <Text style={s.taskTitle} numberOfLines={1}>{task.title}</Text>
-              <Badge
-                label={task.status.replace('-', ' ')}
-                variant={statusToVariant[task.status] || 'neutral'}
-                size="sm"
-              />
-            </View>
-            <Text style={s.taskProject}>{task.project}</Text>
-            {task.progress > 0 && (
-              <View style={s.taskProgressRow}>
-                <ProgressBar
-                  progress={task.progress}
-                  style={{ flex: 1 }}
-                  height={5}
-                  color={Colors.primary}
-                />
-                <Text style={s.taskProgressTxt}>{task.progress}%</Text>
-              </View>
-            )}
-            <View style={s.taskBottom}>
-              <Ionicons name="calendar-outline" size={11} color={Colors.gray400} />
-              <Text style={s.taskDue}> Due {task.dueDate}</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-
-        {/* Active Projects */}
-        <View style={s.sectionRow}>
-          <Text style={s.sectionTitle}>Projects</Text>
-          <TouchableOpacity onPress={() => router.push('/projects')}><Text style={s.seeAll}>View All</Text></TouchableOpacity>
-        </View>
-        {mockProjects.filter(p => p.status === 'active').map(project => (
-          <TouchableOpacity key={project.id} style={s.projectCard} onPress={() => router.push(`/projects/${project.id}` as any)} activeOpacity={0.82}>
-            <View style={s.projectTop}>
-              <View style={s.projectInfo}>
-                <Text style={s.projectName} numberOfLines={1}>{project.name}</Text>
-                <Text style={s.projectClient}>{project.client}</Text>
-              </View>
-              <View style={s.projectPctBadge}>
-                <Text style={s.projectPct}>{project.progress}%</Text>
-              </View>
-            </View>
-            <ProgressBar
-              progress={project.progress}
-              style={{ marginTop: 10, marginBottom: 8 }}
-              height={5}
-              color={project.progress > 75 ? Colors.success : project.progress > 40 ? Colors.primary : Colors.warning}
-            />
-            <View style={s.projectBottom}>
-              <View style={s.projectTasksRow}>
-                <Ionicons name="checkmark-done-outline" size={12} color={Colors.gray400} />
-                <Text style={s.projectTasks}> {project.tasksCompleted}/{project.tasksTotal} tasks</Text>
-              </View>
-              <View style={s.teamRow}>
-                {project.team.slice(0, 3).map((t, i) => (
-                  <Avatar key={i} initials={t} size={22} style={{ marginLeft: i > 0 ? -7 : 0 }} />
-                ))}
-                {project.team.length > 3 && (
-                  <View style={s.moreMembers}><Text style={s.moreTxt}>+{project.team.length - 3}</Text></View>
-                )}
-              </View>
-            </View>
-          </TouchableOpacity>
-        ))}
-
         {/* Announcements */}
         <View style={s.sectionRow}>
           <Text style={s.sectionTitle}>Announcements</Text>
@@ -263,7 +184,7 @@ export default function DashboardScreen() {
 }
 
 const s = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#EEF6FC' },
+  root: { flex: 1, backgroundColor: '#FFFFFF' },
 
   // Header
   header: {
@@ -295,7 +216,7 @@ const s = StyleSheet.create({
 
   // Scroll
   scroll: { flex: 1 },
-  scrollContent: { paddingHorizontal: 16, paddingTop: 20, backgroundColor: '#EEF6FC' },
+  scrollContent: { paddingHorizontal: 16, paddingTop: 20, backgroundColor: '#FFFFFF' },
 
   // Section
   sectionRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, marginTop: 6 },
