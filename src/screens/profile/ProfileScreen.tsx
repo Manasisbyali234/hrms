@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Typography, Spacing, Radius, Shadow } from '../../design-system/tokens';
+import { Colors, Typography, Spacing, Radius, Shadow, IconBox } from '../../design-system/tokens';
 import { Card, Divider } from '../../design-system/components/Card';
 import { Avatar } from '../../design-system/components/Avatar';
 import { Badge } from '../../design-system/components/Badge';
@@ -100,7 +100,7 @@ export default function ProfileScreen() {
           <Text style={styles.sectionLabel}>Profile Settings</Text>
           {MENU_ITEMS.map((item, i) => (
             <TouchableOpacity key={item.label} style={styles.menuItem} onPress={() => router.push(item.route as any)} activeOpacity={0.7}>
-              <View style={[styles.menuIconBox, { backgroundColor: item.color + '15' }]}>
+              <View style={styles.menuIconBox}>
                 <Ionicons name={item.iconName} size={18} color={item.color} />
               </View>
               <Text style={styles.menuLabel}>{item.label}</Text>
@@ -145,12 +145,12 @@ const styles = StyleSheet.create({
   menuCard: { marginHorizontal: Spacing[4], marginBottom: Spacing[3] },
   sectionLabel: { fontSize: Typography.fontSize.sm, fontWeight: '700', color: Colors.gray500, marginBottom: 16, textTransform: 'uppercase', letterSpacing: 0.5 },
   infoRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 4 },
-  infoIconBox: { width: 32, height: 32, borderRadius: Radius.sm, backgroundColor: Colors.overlayLight, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
+  infoIconBox: { width: IconBox.sizeSmall, height: IconBox.sizeSmall, borderRadius: IconBox.radius, backgroundColor: IconBox.bg, alignItems: 'center', justifyContent: 'center', marginRight: 12, ...IconBox.shadow as any },
   infoContent: { flex: 1 },
   infoLabel: { fontSize: Typography.fontSize.xs, color: Colors.gray400, marginBottom: 1 },
   infoValue: { fontSize: Typography.fontSize.sm, color: Colors.gray800, fontWeight: '600' },
   menuItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12 },
-  menuIconBox: { width: 36, height: 36, borderRadius: Radius.sm, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
+  menuIconBox: { width: IconBox.sizeSmall, height: IconBox.sizeSmall, borderRadius: IconBox.radius, backgroundColor: IconBox.bg, alignItems: 'center', justifyContent: 'center', marginRight: 12, ...IconBox.shadow as any },
   menuLabel: { flex: 1, fontSize: Typography.fontSize.base, color: Colors.gray800, fontWeight: '500' },
   logoutBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginHorizontal: Spacing[4], marginBottom: Spacing[3], backgroundColor: Colors.dangerLight, borderRadius: Radius.lg, paddingVertical: 14, gap: 8 },
   logoutText: { fontSize: Typography.fontSize.base, fontWeight: '700', color: Colors.danger },

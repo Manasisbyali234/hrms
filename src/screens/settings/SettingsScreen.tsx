@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform, StatusBar, Switch, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Typography, Spacing, Radius } from '../../design-system/tokens';
+import { Colors, Typography, Spacing, Radius, IconBox } from '../../design-system/tokens';
 import { Card, Divider } from '../../design-system/components/Card';
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
@@ -85,7 +85,7 @@ export default function SettingsScreen() {
                     activeOpacity={item.toggle ? 1 : 0.7}
                   >
                     <View style={styles.settingLeft}>
-                      <View style={[styles.settingIconBox, { backgroundColor: item.iconColor + '15' }]}>
+                      <View style={styles.settingIconBox}>
                         <Ionicons name={item.iconName} size={18} color={item.iconColor} />
                       </View>
                       <Text style={styles.settingLabel}>{item.label}</Text>
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
   sectionCard: { marginBottom: 0 },
   settingRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12 },
   settingLeft: { flexDirection: 'row', alignItems: 'center', flex: 1 },
-  settingIconBox: { width: 36, height: 36, borderRadius: Radius.sm, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
+  settingIconBox: { width: IconBox.sizeSmall, height: IconBox.sizeSmall, borderRadius: IconBox.radius, backgroundColor: IconBox.bg, alignItems: 'center', justifyContent: 'center', marginRight: 12, ...IconBox.shadow as any },
   settingLabel: { fontSize: Typography.fontSize.base, color: Colors.gray800, fontWeight: '500' },
   settingRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   settingValue: { fontSize: Typography.fontSize.sm, color: Colors.gray400 },

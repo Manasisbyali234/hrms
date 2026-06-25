@@ -6,30 +6,33 @@ import {
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors, Typography, Spacing, Radius, Shadow } from '../../design-system/tokens';
+import { Colors, Typography, Spacing, Radius, Shadow, IconBox } from '../../design-system/tokens';
 import { Avatar } from '../../design-system/components/Avatar';
 import { Badge, statusToVariant } from '../../design-system/components/Badge';
 import { ProgressBar } from '../../design-system/components/Card';
-import { currentUser, mockTasks, mockProjects, mockNotifications, mockAttendance } from '../../data/mockData';
+import { currentUser, mockTasks, mockProjects, mockNotifications, mockAttendance, mockAnnouncements } from '../../data/mockData';
 
 const { width: SCREEN_W } = Dimensions.get('window');
 const CARD_W = (SCREEN_W - 16 * 2 - 10) / 2;
 
+const WEEK_DAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
 const QUICK_ACTIONS = [
-  { icon: 'time-outline' as const,              label: 'Check In',    color: '#34D399', bg: '#D1FAE5', route: '/(tabs)/attendance' },
-  { icon: 'calendar-outline' as const,          label: 'Apply Leave', color: '#FBBF24', bg: '#FEF3C7', route: '/leaves/apply' },
-  { icon: 'receipt-outline' as const,           label: 'Expense',     color: '#4DA8DA', bg: '#E1F0FA', route: '/expenses' },
-  { icon: 'people-outline' as const,            label: 'Directory',   color: '#56CCF2', bg: '#E8F7FD', route: '/employees' },
-  { icon: 'bar-chart-outline' as const,         label: 'Payroll',     color: '#F87171', bg: '#FEE2E2', route: '/payroll' },
-  { icon: 'chatbubbles-outline' as const,       label: 'Chat',        color: '#2E86B5', bg: '#C8E4F5', route: '/(tabs)/chat' },
-  { icon: 'person-add-outline' as const,        label: 'Add Lead',    color: '#34D399', bg: '#D1FAE5', route: '/leads/add' },
+  { icon: 'time-outline' as const,        label: 'Check In',      color: '#34D399', route: '/(tabs)/attendance' },
+  { icon: 'calendar-outline' as const,    label: 'Apply Leave',   color: '#FBBF24', route: '/leaves/apply' },
+  { icon: 'receipt-outline' as const,     label: 'Expense',       color: '#4DA8DA', route: '/expenses' },
+  { icon: 'people-outline' as const,      label: 'Directory',     color: '#56CCF2', route: '/employees' },
+  { icon: 'bar-chart-outline' as const,   label: 'Payroll',       color: '#F87171', route: '/payroll' },
+  { icon: 'chatbubbles-outline' as const, label: 'Chat',          color: '#2E86B5', route: '/(tabs)/chat' },
+  { icon: 'person-add-outline' as const,  label: 'Add Lead',      color: '#34D399', route: '/leads/add' },
+  { icon: 'megaphone-outline' as const,   label: 'Announcements', color: '#FF4D6D', route: '/announcements' },
 ];
 
 const STATS = (pendingTasks: number, activeProjects: number, leaveBalance: number, attendance: string) => [
-  { label: 'Pending Tasks',    value: pendingTasks,    icon: 'list-circle-outline' as const,  color: '#4DA8DA', bg: '#E1F0FA', route: '/(tabs)/tasks' },
-  { label: 'Active Projects',  value: activeProjects,  icon: 'folder-open-outline' as const,  color: '#2E86B5', bg: '#C8E4F5', route: '/projects' },
-  { label: 'Leave Balance',    value: leaveBalance,    icon: 'umbrella-outline' as const,     color: '#34D399', bg: '#D1FAE5', route: '/(tabs)/leaves' },
-  { label: 'Attendance',       value: attendance,      icon: 'pulse-outline' as const,        color: '#FBBF24', bg: '#FEF3C7', route: '/(tabs)/attendance' },
+  { label: 'Pending Tasks',    value: pendingTasks,    icon: 'list-circle-outline' as const,  color: '#4DA8DA', route: '/(tabs)/tasks' },
+  { label: 'Active Projects',  value: activeProjects,  icon: 'folder-open-outline' as const,  color: '#2E86B5', route: '/projects' },
+  { label: 'Leave Balance',    value: leaveBalance,    icon: 'umbrella-outline' as const,     color: '#34D399', route: '/(tabs)/leaves' },
+  { label: 'Attendance',       value: attendance,      icon: 'pulse-outline' as const,        color: '#FBBF24', route: '/(tabs)/attendance' },
 ];
 
 function useElapsedTimer() {
@@ -54,6 +57,7 @@ function getGreeting() {
 export default function DashboardScreen() {
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
+  const [checkedIn, setCheckedIn] = useState(true);
   const elapsedTime = useElapsedTimer();
   const scrollViewRef = useRef<ScrollView>(null);
   const onRefresh = () => { setRefreshing(true); setTimeout(() => setRefreshing(false), 1200); };
@@ -123,12 +127,53 @@ export default function DashboardScreen() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.primary} />}
       >
 
+        {/* Attendance Card */}
+        <View style={s.attCard}>
+          <View style={s.attCardStatus}>
+            <View style={[s.attCardDot, { backgroundColor: checkedIn ? '#34D399' : '#9CA3AF' }]} />
+            <Text style={s.attCardStatusTxt}>{checkedIn ? 'Currently Working' : 'Not Checked In'}</Text>
+          </View>
+          <TouchableOpacity
+            style={[s.attCardBtn, { backgroundColor: checkedIn ? '#F87171' : '#34D399' }]}
+            onPress={() => setCheckedIn(!checkedIn)}
+            activeOpacity={0.85}
+          >
+            <Ionicons name={checkedIn ? 'log-out-outline' : 'log-in-outline'} size={16} color="#fff" />
+            <Text style={s.attCardBtnTxt}>{checkedIn ? 'Check Out' : 'Check In'}</Text>
+          </TouchableOpacity>
+
+          {/* Week row */}
+          <Text style={s.attCardWeekTitle}>This Week</Text>
+          <View style={s.attCardWeekRow}>
+            {WEEK_DAYS.map((day, i) => {
+              const status = i === 0 ? 'active' : i === 5 || i === 6 ? 'weekend' : i === 4 ? 'absent' : 'present';
+              const color = status === 'present' ? '#34D399' : status === 'active' ? '#4DA8DA' : status === 'absent' ? '#F87171' : '#D1D5DB';
+              return (
+                <View key={i} style={s.attCardDay}>
+                  <Text style={s.attCardDayLabel}>{day}</Text>
+                  <View style={[s.attCardDayDot, { backgroundColor: color }]}>
+                    {status === 'active' && <View style={s.attCardDayPulse} />}
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+          <View style={s.attCardLegend}>
+            {([['Present', '#34D399'], ['Active', '#4DA8DA'], ['Absent', '#F87171'], ['Weekend', '#D1D5DB']] as [string, string][]).map(([label, color]) => (
+              <View key={label} style={s.legendItem}>
+                <View style={[s.legendDot, { backgroundColor: color }]} />
+                <Text style={s.legendTxt}>{label}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+
         {/* Quick Actions */}
         <Text style={s.sectionTitle}>Quick Actions</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.qaRow}>
           {QUICK_ACTIONS.map((a, i) => (
             <TouchableOpacity key={i} style={s.qaItem} onPress={() => router.push(a.route as any)} activeOpacity={0.75}>
-              <View style={[s.qaCircle, { backgroundColor: a.bg }]}>
+              <View style={s.qaCircle}>
                 <Ionicons name={a.icon} size={22} color={a.color} />
               </View>
               <Text style={s.qaLabel}>{a.label}</Text>
@@ -144,7 +189,7 @@ export default function DashboardScreen() {
         <View style={s.statsGrid}>
           {stats.map((item, i) => (
             <TouchableOpacity key={i} style={[s.statCard, { width: CARD_W }]} onPress={() => router.push(item.route as any)} activeOpacity={0.82}>
-              <View style={[s.statIconBox, { backgroundColor: item.bg }]}>
+              <View style={s.statIconBox}>
                 <Ionicons name={item.icon} size={20} color={item.color} />
               </View>
               <Text style={s.statValue}>{item.value}</Text>
@@ -153,28 +198,34 @@ export default function DashboardScreen() {
           ))}
         </View>
 
-        {/* Announcements */}
+        {/* Recent Announcements */}
         <View style={s.sectionRow}>
           <Text style={s.sectionTitle}>Announcements</Text>
-          <TouchableOpacity onPress={() => router.push('/announcements')}><Text style={s.seeAll}>View All</Text></TouchableOpacity>
+          <View style={s.annHeaderRight}>
+            <TouchableOpacity style={s.importBtn} onPress={() => router.push('/announcements')} activeOpacity={0.8}>
+              <Ionicons name="cloud-upload-outline" size={13} color="#fff" />
+              <Text style={s.importBtnText}>Import</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/announcements')}><Text style={s.seeAll}>View All</Text></TouchableOpacity>
+          </View>
         </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingRight: 16 }}>
-          {[
-            { icon: 'megaphone-outline' as const, title: 'Q2 Town Hall', date: 'Jun 15', color: '#4DA8DA', bg: '#E1F0FA' },
-            { icon: 'document-text-outline' as const, title: 'New Leave Policy', date: 'Jul 1', color: '#2E86B5', bg: '#C8E4F5' },
-            { icon: 'people-circle-outline' as const, title: 'Team Outing', date: 'Jun 21', color: '#34D399', bg: '#D1FAE5' },
-          ].map((a, i) => (
-            <TouchableOpacity key={i} style={[s.annCard, { borderTopColor: a.color }]} onPress={() => router.push('/announcements')} activeOpacity={0.82}>
-              <View style={[s.annIcon, { backgroundColor: a.bg }]}>
-                <Ionicons name={a.icon} size={18} color={a.color} />
-              </View>
-              <Text style={s.annTitle} numberOfLines={2}>{a.title}</Text>
-              <View style={s.annDateRow}>
-                <Ionicons name="calendar-outline" size={10} color={Colors.gray400} />
-                <Text style={s.annDate}> {a.date}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
+          {mockAnnouncements.slice(0, 4).map((a) => {
+            const borderColor = a.priority === 'Urgent' ? '#FF4D6D' : a.priority === 'High' ? '#2563EB' : a.priority === 'Medium' ? '#F59E0B' : '#10B981';
+            const iconBg      = a.priority === 'Urgent' ? '#FFE4EA' : a.priority === 'High' ? '#DBEAFE' : a.priority === 'Medium' ? '#FEF3C7' : '#D1FAE5';
+            return (
+              <TouchableOpacity key={a.id} style={[s.annCard, { borderTopColor: borderColor }]} onPress={() => router.push('/announcements')} activeOpacity={0.82}>
+                <View style={s.annIcon}>
+                  <Ionicons name="megaphone-outline" size={16} color={borderColor} />
+                </View>
+                <Text style={s.annTitle} numberOfLines={2}>{a.title}</Text>
+                <View style={s.annDateRow}>
+                  <Ionicons name="calendar-outline" size={10} color={Colors.gray400} />
+                  <Text style={s.annDate}> {a.date}</Text>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
         </ScrollView>
 
         <View style={{ height: 110 }} />
@@ -184,7 +235,7 @@ export default function DashboardScreen() {
 }
 
 const s = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#FFFFFF' },
+  root: { flex: 1, backgroundColor: '#F3F4F6' },
 
   // Header
   header: {
@@ -216,7 +267,7 @@ const s = StyleSheet.create({
 
   // Scroll
   scroll: { flex: 1 },
-  scrollContent: { paddingHorizontal: 16, paddingTop: 20, backgroundColor: '#FFFFFF' },
+  scrollContent: { paddingHorizontal: 16, paddingTop: 20, backgroundColor: '#F3F4F6' },
 
   // Section
   sectionRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, marginTop: 6 },
@@ -226,7 +277,7 @@ const s = StyleSheet.create({
   // Quick Actions
   qaRow: { paddingBottom: 16, gap: 6 },
   qaItem: { alignItems: 'center', width: 64 },
-  qaCircle: { width: 52, height: 52, borderRadius: 26, alignItems: 'center', justifyContent: 'center', marginBottom: 6, ...Shadow.sm },
+  qaCircle: { width: IconBox.size, height: IconBox.size, borderRadius: IconBox.radius, backgroundColor: IconBox.bg, alignItems: 'center', justifyContent: 'center', marginBottom: 6, ...IconBox.shadow as any },
   qaLabel: { fontSize: 10, color: '#3A7399', fontWeight: '600', textAlign: 'center' },
 
   // Stats Grid
@@ -236,10 +287,8 @@ const s = StyleSheet.create({
     borderRadius: 16,
     padding: 14,
     ...Shadow.sm,
-    borderWidth: 1,
-    borderColor: '#C8E4F5',
   },
-  statIconBox: { width: 38, height: 38, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginBottom: 10 },
+  statIconBox: { width: IconBox.sizeSmall, height: IconBox.sizeSmall, borderRadius: IconBox.radius, backgroundColor: IconBox.bg, alignItems: 'center', justifyContent: 'center', marginBottom: 10, ...IconBox.shadow as any },
   statValue: { fontSize: 26, fontWeight: '800', color: '#163E57', letterSpacing: -0.5, lineHeight: 30 },
   statLabel: { fontSize: 11, color: '#5590B5', marginTop: 3, fontWeight: '500' },
 
@@ -250,8 +299,6 @@ const s = StyleSheet.create({
     padding: 14,
     marginBottom: 10,
     ...Shadow.sm,
-    borderWidth: 1,
-    borderColor: '#C8E4F5',
   },
   taskTop: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 },
   taskPriorityDot: { width: 7, height: 7, borderRadius: 4, flexShrink: 0 },
@@ -269,8 +316,6 @@ const s = StyleSheet.create({
     padding: 14,
     marginBottom: 10,
     ...Shadow.sm,
-    borderWidth: 1,
-    borderColor: '#C8E4F5',
   },
   projectTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
   projectInfo: { flex: 1, marginRight: 10 },
@@ -285,7 +330,31 @@ const s = StyleSheet.create({
   moreMembers: { width: 22, height: 22, borderRadius: 11, backgroundColor: '#C8E4F5', marginLeft: -7, alignItems: 'center', justifyContent: 'center' },
   moreTxt: { fontSize: 8, color: '#3A7399', fontWeight: '700' },
 
-  // Announcements
+  // Attendance Card
+  attCard: {
+    backgroundColor: '#fff',
+    borderRadius: 18,
+    padding: 16,
+    marginBottom: 20,
+    ...Shadow.sm,
+  },
+  attCardStatus: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginBottom: 12 },
+  attCardDot: { width: 8, height: 8, borderRadius: 4 },
+  attCardStatusTxt: { fontSize: 13, fontWeight: '600', color: '#163E57' },
+  attCardBtn: { flexDirection: 'row', alignItems: 'center', alignSelf: 'center', gap: 6, paddingHorizontal: 28, paddingVertical: 10, borderRadius: 999, marginBottom: 16, ...Shadow.sm },
+  attCardBtnTxt: { fontSize: 12, fontWeight: '700', color: '#fff' },
+  attCardWeekTitle: { fontSize: 13, fontWeight: '700', color: '#163E57', marginBottom: 10 },
+  attCardWeekRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
+  attCardDay: { alignItems: 'center', gap: 6 },
+  attCardDayLabel: { fontSize: 11, color: '#5590B5', fontWeight: '600' },
+  attCardDayDot: { width: 28, height: 28, borderRadius: 14, position: 'relative' },
+  attCardDayPulse: { position: 'absolute', top: -3, left: -3, right: -3, bottom: -3, borderRadius: 18, borderWidth: 2, borderColor: '#4DA8DA60' },
+  attCardLegend: { flexDirection: 'row', justifyContent: 'space-around' },
+  legendItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  legendDot: { width: 7, height: 7, borderRadius: 4 },
+  legendTxt: { fontSize: 11, color: '#5590B5' },
+
+  // Announcements strip
   annCard: {
     width: 138,
     backgroundColor: '#fff',
@@ -294,11 +363,13 @@ const s = StyleSheet.create({
     marginRight: 10,
     borderTopWidth: 3,
     ...Shadow.sm,
-    borderWidth: 1,
-    borderColor: '#C8E4F5',
   },
-  annIcon: { width: 34, height: 34, borderRadius: 10, alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
+  annIcon: { width: IconBox.sizeSmall, height: IconBox.sizeSmall, borderRadius: IconBox.radius, backgroundColor: IconBox.bg, alignItems: 'center', justifyContent: 'center', marginBottom: 8, ...IconBox.shadow as any },
   annTitle: { fontSize: 12, fontWeight: '700', color: '#163E57', marginBottom: 6, lineHeight: 16 },
   annDateRow: { flexDirection: 'row', alignItems: 'center' },
   annDate: { fontSize: 10, color: '#78AECF' },
+
+  annHeaderRight: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  importBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: Colors.primary, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 5 },
+  importBtnText: { fontSize: 11, fontWeight: '700', color: '#fff' },
 });

@@ -226,7 +226,7 @@ const s = StyleSheet.create({
   addSub: { fontSize: 11, color: 'rgba(255,255,255,0.75)', marginTop: 2 },
 
   qaRow: { flexDirection: 'row', gap: 10, marginBottom: 16 },
-  qaItem: { flex: 1, backgroundColor: '#fff', borderRadius: 14, padding: 12, alignItems: 'center', ...Shadow.sm, borderWidth: 1, borderColor: Colors.gray100 },
+  qaItem: { flex: 1, backgroundColor: '#fff', borderRadius: 14, padding: 12, alignItems: 'center', ...Shadow.sm },
   qaIcon: { width: 38, height: 38, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginBottom: 6 },
   qaLabel: { fontSize: 11, color: Colors.gray700, fontWeight: '600' },
 
@@ -236,7 +236,7 @@ const s = StyleSheet.create({
   filterChipTxt: { fontSize: 12, fontWeight: '600', color: Colors.gray600 },
   filterChipTxtActive: { color: '#fff' },
 
-  card: { backgroundColor: '#fff', borderRadius: 16, marginBottom: 12, ...Shadow.sm, borderWidth: 1, borderColor: Colors.gray100, overflow: 'hidden' },
+  card: { backgroundColor: '#fff', borderRadius: 16, marginBottom: 12, ...Shadow.sm, overflow: 'hidden' },
   cardTop: { flexDirection: 'row', alignItems: 'center', padding: 14, paddingBottom: 10, gap: 12 },
   avatar: { width: 44, height: 44, borderRadius: 22, backgroundColor: Colors.primary + '20', alignItems: 'center', justifyContent: 'center' },
   avatarTxt: { fontSize: 14, fontWeight: '800', color: Colors.primary },

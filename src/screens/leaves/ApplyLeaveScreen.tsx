@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  Platform, StatusBar, KeyboardAvoidingView,
+  Platform, StatusBar, KeyboardAvoidingView, Dimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,6 +9,9 @@ import { Colors, Typography, Spacing, Radius } from '../../design-system/tokens'
 import { Input } from '../../design-system/components/Input';
 import { Button } from '../../design-system/components/Button';
 import { Card } from '../../design-system/components/Card';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const isSmall = SCREEN_WIDTH < 360;
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -83,7 +86,7 @@ export default function ApplyLeaveScreen() {
         </ScrollView>
 
         <Text style={styles.sectionLabel}>Date Range</Text>
-        <View style={styles.dateRow}>
+        <View style={[styles.dateRow, isSmall && styles.dateRowSmall]}>
           <View style={styles.dateBox}>
             <Text style={styles.dateLabel}>From</Text>
             <Input
@@ -92,9 +95,11 @@ export default function ApplyLeaveScreen() {
               style={{ marginBottom: 0 }}
             />
           </View>
-          <View style={styles.dateSeparator}>
-            <Ionicons name="arrow-forward" size={18} color={Colors.gray400} />
-          </View>
+          {!isSmall && (
+            <View style={styles.dateSeparator}>
+              <Ionicons name="arrow-forward" size={18} color={Colors.gray400} />
+            </View>
+          )}
           <View style={styles.dateBox}>
             <Text style={styles.dateLabel}>To</Text>
             <Input
@@ -110,7 +115,7 @@ export default function ApplyLeaveScreen() {
             <View style={styles.durationIconBox}>
               <Ionicons name="time-outline" size={20} color={Colors.primary} />
             </View>
-            <View>
+            <View style={styles.durationInfo}>
               <Text style={styles.durationLabel}>Duration</Text>
               <Text style={styles.durationValue}>3 Working Days</Text>
             </View>
@@ -188,16 +193,18 @@ const styles = StyleSheet.create({
   typeLabel: { fontSize: Typography.fontSize.xs, fontWeight: '700', color: Colors.gray700, textAlign: 'center', marginBottom: 4 },
   typeLabelActive: { color: Colors.white },
   typeBalance: { fontSize: 10, color: Colors.gray500 },
-  dateRow: { flexDirection: 'row', alignItems: 'center', marginBottom: Spacing[3] },
+  dateRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: Spacing[3] },
+  dateRowSmall: { flexDirection: 'column', gap: 8 },
   dateBox: { flex: 1 },
   dateLabel: { fontSize: Typography.fontSize.xs, color: Colors.gray500, marginBottom: 4 },
-  dateSeparator: { paddingHorizontal: 8, paddingTop: 24 },
+  dateSeparator: { paddingHorizontal: 8, paddingTop: 28 },
   durationCard: { marginBottom: Spacing[4] },
-  durationRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  durationIconBox: { width: 40, height: 40, borderRadius: Radius.md, backgroundColor: Colors.overlayLight, alignItems: 'center', justifyContent: 'center' },
+  durationRow: { flexDirection: 'row', alignItems: 'center', gap: 12, flexWrap: 'wrap' },
+  durationIconBox: { width: 40, height: 40, borderRadius: Radius.md, backgroundColor: Colors.overlayLight, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  durationInfo: { flex: 1, minWidth: 80 },
   durationLabel: { fontSize: Typography.fontSize.xs, color: Colors.gray500 },
   durationValue: { fontSize: Typography.fontSize.base, fontWeight: '700', color: Colors.primary },
-  halfDayBtn: { marginLeft: 'auto', flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 12, paddingVertical: 6, borderRadius: Radius.full, borderWidth: 1.5, borderColor: Colors.primary },
+  halfDayBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 12, paddingVertical: 6, borderRadius: Radius.full, borderWidth: 1.5, borderColor: Colors.primary, flexShrink: 0 },
   halfDayBtnActive: { backgroundColor: Colors.primary },
   halfDayText: { fontSize: Typography.fontSize.xs, color: Colors.primary, fontWeight: '600' },
   approverRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
@@ -207,7 +214,7 @@ const styles = StyleSheet.create({
   approverRole: { fontSize: Typography.fontSize.xs, color: Colors.gray500 },
   policyNote: { flexDirection: 'row', backgroundColor: Colors.infoLight, borderRadius: Radius.md, padding: Spacing[3], gap: 8, marginBottom: Spacing[3] },
   policyText: { flex: 1, fontSize: Typography.fontSize.xs, color: Colors.info, lineHeight: 18 },
-  successContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: Spacing[6], backgroundColor: Colors.white },
+  successContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: Spacing[5], paddingVertical: Spacing[8], backgroundColor: Colors.white },
   successIconBox: { marginBottom: 24 },
   successTitle: { fontSize: Typography.fontSize['3xl'], fontWeight: '800', color: Colors.gray900, marginBottom: 12 },
   successSub: { fontSize: Typography.fontSize.base, color: Colors.gray500, textAlign: 'center', lineHeight: 24, marginBottom: 8 },

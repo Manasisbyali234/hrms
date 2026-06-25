@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import {
-  View, Text, StyleSheet, Animated, Dimensions, StatusBar, Image,
+  View, Text, StyleSheet, Animated, Dimensions, StatusBar, Image, Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Colors, Typography } from '../../design-system/tokens';
@@ -110,11 +110,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 20,
-    shadowColor: Colors.white,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 30,
-    elevation: 20,
+    ...(Platform.OS === 'web'
+      ? { boxShadow: '0px 0px 30px rgba(255,255,255,0.3)' }
+      : { shadowColor: Colors.white, shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.3, shadowRadius: 30, elevation: 20 }
+    ),
   },
   logoImage: { width: 74, height: 74 },
   brandName: {

@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform, StatusBar } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform, StatusBar, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Typography, Spacing, Radius, Shadow } from '../../design-system/tokens';
+import { Colors, Typography, Spacing, Radius, Shadow, IconBox } from '../../design-system/tokens';
 import { Card, SectionHeader } from '../../design-system/components/Card';
 import { Badge, statusToVariant } from '../../design-system/components/Badge';
 import { mockExpenses } from '../../data/mockData';
@@ -20,8 +20,23 @@ const EXPENSE_CATEGORIES: { label: string; iconName: IoniconName; color: string 
 
 export default function ExpensesScreen() {
   const router = useRouter();
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const totalPending  = mockExpenses.filter(e => e.status === 'pending').reduce((a, e) => a + e.amount, 0);
   const totalApproved = mockExpenses.filter(e => e.status === 'approved').reduce((a, e) => a + e.amount, 0);
+
+  const filteredExpenses = selectedCategory
+    ? mockExpenses.filter(e => e.category === selectedCategory)
+    : mockExpenses;
+
+  const handleSubmitExpense = () =>
+    Alert.alert('Submit Expense', 'Expense submission form coming soon!', [{ text: 'OK' }]);
+
+  const handleExpensePress = (expense: typeof mockExpenses[0]) =>
+    Alert.alert(
+      expense.title,
+      `Category: ${expense.category}\nAmount: ₹${expense.amount.toLocaleString()}\nDate: ${expense.date}\nStatus: ${expense.status.toUpperCase()}\n\n${expense.description}`,
+      [{ text: 'Close' }]
+    );
 
   return (
     <View style={styles.container}>
@@ -57,7 +72,7 @@ export default function ExpensesScreen() {
       </View>
 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <TouchableOpacity style={styles.submitCTA} activeOpacity={0.85}>
+        <TouchableOpacity style={styles.submitCTA} activeOpacity={0.85} onPress={handleSubmitExpense}>
           <View style={styles.submitLeft}>
             <View style={styles.submitIconBox}>
               <Ionicons name="add-circle-outline" size={32} color={Colors.white} />
@@ -72,23 +87,35 @@ export default function ExpensesScreen() {
 
         <SectionHeader title="Quick Category" />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriesRow}>
-          {EXPENSE_CATEGORIES.map(cat => (
-            <TouchableOpacity key={cat.label} style={styles.categoryItem} activeOpacity={0.8}>
-              <View style={[styles.categoryIcon, { backgroundColor: cat.color + '18' }]}>
-                <Ionicons name={cat.iconName} size={24} color={cat.color} />
-              </View>
-              <Text style={styles.categoryLabel}>{cat.label}</Text>
-            </TouchableOpacity>
-          ))}
+          {EXPENSE_CATEGORIES.map(cat => {
+            const isSelected = selectedCategory === cat.label;
+            return (
+              <TouchableOpacity
+                key={cat.label}
+                style={styles.categoryItem}
+                activeOpacity={0.8}
+                onPress={() => setSelectedCategory(isSelected ? null : cat.label)}
+              >
+                <View style={styles.categoryIcon}>
+                  <Ionicons name={cat.iconName} size={24} color={isSelected ? cat.color : cat.color} />
+                </View>
+                <Text style={[styles.categoryLabel, isSelected && { color: cat.color, fontWeight: '700' }]}>{cat.label}</Text>
+              </TouchableOpacity>
+            );
+          })}
         </ScrollView>
 
-        <SectionHeader title="Expense History" actionLabel="View All" />
-        {mockExpenses.map(expense => {
+        <SectionHeader
+          title={selectedCategory ? `${selectedCategory} Expenses` : 'Expense History'}
+          actionLabel={selectedCategory ? 'Clear Filter' : 'View All'}
+          onAction={() => selectedCategory ? setSelectedCategory(null) : Alert.alert('Expense History', `Showing all ${mockExpenses.length} expenses`, [{ text: 'OK' }])}
+        />
+        {filteredExpenses.map(expense => {
           const cat = EXPENSE_CATEGORIES.find(c => c.label === expense.category);
           return (
-            <Card key={expense.id} onPress={() => {}}>
+            <Card key={expense.id} onPress={() => handleExpensePress(expense)}>
               <View style={styles.expenseHeader}>
-                <View style={[styles.expenseIconBox, { backgroundColor: (cat?.color ?? Colors.gray500) + '18' }]}>
+                <View style={styles.expenseIconBox}>
                   <Ionicons name={cat?.iconName ?? 'receipt-outline'} size={22} color={cat?.color ?? Colors.gray500} />
                 </View>
                 <View style={styles.expenseInfo}>
@@ -114,7 +141,7 @@ export default function ExpensesScreen() {
         <View style={{ height: 100 }} />
       </ScrollView>
 
-      <TouchableOpacity style={styles.fab} activeOpacity={0.85}>
+      <TouchableOpacity style={styles.fab} activeOpacity={0.85} onPress={handleSubmitExpense}>
         <Ionicons name="add" size={28} color={Colors.white} />
       </TouchableOpacity>
     </View>
@@ -146,10 +173,10 @@ const styles = StyleSheet.create({
   submitSub: { fontSize: Typography.fontSize.xs, color: 'rgba(255,255,255,0.7)', marginTop: 2 },
   categoriesRow: { marginBottom: Spacing[4] },
   categoryItem: { alignItems: 'center', marginRight: 16 },
-  categoryIcon: { width: 52, height: 52, borderRadius: 16, alignItems: 'center', justifyContent: 'center', marginBottom: 6 },
+  categoryIcon: { width: IconBox.size, height: IconBox.size, borderRadius: IconBox.radius, backgroundColor: IconBox.bg, alignItems: 'center', justifyContent: 'center', marginBottom: 6, ...IconBox.shadow as any },
   categoryLabel: { fontSize: Typography.fontSize.xs, color: Colors.gray600, fontWeight: '600' },
   expenseHeader: { flexDirection: 'row', alignItems: 'flex-start' },
-  expenseIconBox: { width: 44, height: 44, borderRadius: Radius.md, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
+  expenseIconBox: { width: IconBox.size, height: IconBox.size, borderRadius: IconBox.radius, backgroundColor: IconBox.bg, alignItems: 'center', justifyContent: 'center', marginRight: 12, ...IconBox.shadow as any },
   expenseInfo: { flex: 1 },
   expenseTitle: { fontSize: Typography.fontSize.base, fontWeight: '700', color: Colors.gray900 },
   expenseDesc: { fontSize: Typography.fontSize.xs, color: Colors.gray500, marginTop: 2 },

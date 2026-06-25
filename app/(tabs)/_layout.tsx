@@ -3,7 +3,7 @@ import { Tabs } from 'expo-router';
 import { View, Text, StyleSheet, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Colors, Radius, Shadow } from '../../src/design-system/tokens';
+import { Colors, Radius } from '../../src/design-system/tokens';
 
 interface TabIconProps {
   name: React.ComponentProps<typeof Ionicons>['name'];
@@ -13,9 +13,9 @@ interface TabIconProps {
 }
 
 const TabIcon: React.FC<TabIconProps> = ({ name, label, focused, color }) => (
-  <View style={[styles.tabItem, focused && styles.tabItemFocused]}>
-    <View style={focused ? styles.activeIconBg : null}>
-      <Ionicons name={name} size={focused ? 20 : 20} color={focused ? '#fff' : color} />
+  <View style={styles.tabItem}>
+    <View style={focused ? styles.activeIconBg : styles.iconBg}>
+      <View><Ionicons name={name} size={20} color={focused ? '#fff' : color} /></View>
     </View>
     <Text style={[styles.tabLabel, { color: focused ? Colors.primary : color, fontWeight: focused ? '700' : '500' }]}>{label}</Text>
   </View>
@@ -97,17 +97,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderTopWidth: 0,
     paddingTop: 8,
-    shadowColor: '#4DA8DA',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.10,
-    shadowRadius: 16,
-    elevation: 20,
+    ...(Platform.OS === 'web'
+      ? { boxShadow: '0px -4px 16px rgba(77,168,218,0.10)' }
+      : { shadowColor: '#4DA8DA', shadowOffset: { width: 0, height: -4 }, shadowOpacity: 0.10, shadowRadius: 16, elevation: 20 }
+    ),
   },
   tabItem: {
     alignItems: 'center', justifyContent: 'center',
     minWidth: 52, minHeight: 44, gap: 2,
   },
   tabItemFocused: {},
+  iconBg: {
+    paddingHorizontal: 14,
+    paddingVertical: 4,
+    marginBottom: 2,
+  },
   activeIconBg: {
     backgroundColor: Colors.primary,
     borderRadius: 12,

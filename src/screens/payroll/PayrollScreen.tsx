@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Typography, Spacing, Radius, Shadow } from '../../design-system/tokens';
+import { Colors, Typography, Spacing, Radius, Shadow, IconBox } from '../../design-system/tokens';
 import { Card, SectionHeader, Divider } from '../../design-system/components/Card';
 import { Badge } from '../../design-system/components/Badge';
 import { mockPayslips } from '../../data/mockData';
@@ -176,9 +176,9 @@ const styles = StyleSheet.create({
 
   slipRow: { flexDirection: 'row', alignItems: 'center' },
   slipIcon: {
-    width: 44, height: 44, borderRadius: Radius.md,
-    backgroundColor: Colors.overlayLight,
-    alignItems: 'center', justifyContent: 'center', marginRight: 12,
+    width: IconBox.size, height: IconBox.size, borderRadius: IconBox.radius,
+    backgroundColor: IconBox.bg, alignItems: 'center', justifyContent: 'center', marginRight: 12,
+    ...IconBox.shadow as any,
   },
   slipIconText: {},
   slipInfo: { flex: 1 },

@@ -1,286 +1,475 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  Platform, StatusBar, FlatList,
+  Platform, StatusBar, TextInput, Modal, Dimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Typography, Spacing, Radius, Shadow } from '../../design-system/tokens';
-import { Card, SectionHeader, ProgressBar, KPIWidget } from '../../design-system/components/Card';
-import { Badge, statusToVariant } from '../../design-system/components/Badge';
-import { Button } from '../../design-system/components/Button';
-import { ScreenHeader } from '../../design-system/components/Header';
-import { mockAttendance, currentUser } from '../../data/mockData';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Colors, Typography, Spacing, Radius, Shadow, IconBox } from '../../design-system/tokens';
+import { mockEmployees, mockAttendance } from '../../data/mockData';
 
-const WEEK_DAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+const { width: SW } = Dimensions.get('window');
+const isSmall = SW < 380;
 
-export default function AttendanceScreen() {
-  const router = useRouter();
-  const [checkedIn, setCheckedIn] = useState(true);
+// Responsive sizing constants
+const STICKY_W = isSmall ? 108 : 140;
+const DAY_W    = isSmall ? 36  : 44;
+const CELL_SZ  = isSmall ? 22  : 26;
+const CARD_PAD = isSmall ? 8   : 12;
+const ICON_SZ  = isSmall ? 30  : 36;
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+type TabId = 'monthly' | 'daily';
+type AttendanceStatus = 'present' | 'absent' | 'weekend' | 'holiday' | 'active' | 'late';
+
+// ─── Constants ────────────────────────────────────────────────────────────────
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const SHIFTS = ['All Shifts', 'Morning', 'Evening', 'Night', 'General'];
+const DAY_NAMES = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+const AVATAR_COLORS = ['#4DA8DA','#34D399','#FBBF24','#F87171','#A78BFA','#EC4899','#56CCF2'];
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function getDaysInMonth(year: number, month: number) {
+  return new Date(year, month + 1, 0).getDate();
+}
+
+function getDayName(year: number, month: number, day: number) {
+  return DAY_NAMES[new Date(year, month, day).getDay()];
+}
+
+function isWeekend(year: number, month: number, day: number) {
+  const d = new Date(year, month, day).getDay();
+  return d === 0 || d === 6;
+}
+
+function getEmployeeMonthStatus(empId: string, year: number, month: number): Record<number, AttendanceStatus> {
+  const days = getDaysInMonth(year, month);
+  const result: Record<number, AttendanceStatus> = {};
+  for (let d = 1; d <= days; d++) {
+    if (isWeekend(year, month, d)) { result[d] = 'weekend'; continue; }
+    const dateStr = `${year}-${String(month + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    if (empId === 'MM-003') {
+      const rec = mockAttendance.find(r => r.date === dateStr);
+      if (rec) { result[d] = rec.status as AttendanceStatus; continue; }
+    }
+    const seed = (empId.charCodeAt(empId.length - 1) + d) % 10;
+    result[d] = seed < 8 ? 'present' : 'absent';
+  }
+  return result;
+}
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+function SummaryCard({ icon, iconBg, count, label }: {
+  icon: string; iconBg: string; count: number | string; label: string;
+}) {
+  return (
+    <View style={[summaryStyles.card, Shadow.sm]}>
+      <View style={summaryStyles.iconBox}>
+        <Ionicons name={icon as any} size={isSmall ? 15 : 18} color={iconBg} />
+      </View>
+      <Text style={summaryStyles.count}>{count}</Text>
+      <Text style={summaryStyles.label}>{label}</Text>
+    </View>
+  );
+}
+
+const summaryStyles = StyleSheet.create({
+  card: {
+    width: '48%', backgroundColor: Colors.white, borderRadius: Radius.md,
+    padding: 14, alignItems: 'center', gap: 6,
+    borderWidth: 1, borderColor: Colors.gray100,
+  },
+  iconBox: {
+    width: ICON_SZ, height: ICON_SZ, borderRadius: IconBox.radius,
+    backgroundColor: IconBox.bg, alignItems: 'center', justifyContent: 'center',
+    ...IconBox.shadow as any,
+  },
+  count: { fontSize: isSmall ? 16 : 20, fontWeight: '800', color: Colors.gray900 },
+  label: { fontSize: 8, fontWeight: '700', color: Colors.gray500, letterSpacing: 0.5, textTransform: 'uppercase', textAlign: 'center' },
+});
+
+function StatusCell({ status }: { status: AttendanceStatus }) {
+  if (status === 'weekend' || status === 'holiday') {
+    return (
+      <View style={cellStyles.wrapper}>
+        <View style={cellStyles.weekend} />
+      </View>
+    );
+  }
+  const isPresent = status === 'present' || status === 'active';
+  const late = status === 'late';
+  const bg   = late ? '#FEF3C7' : isPresent ? '#D1FAE5' : '#FEE2E2';
+  const col  = late ? '#D97706' : isPresent ? '#059669' : '#DC2626';
+  const icon = late ? 'time'    : isPresent ? 'checkmark' : 'close';
+  return (
+    <View style={cellStyles.wrapper}>
+      <View style={[cellStyles.pill, { backgroundColor: bg }]}>
+        <Ionicons name={icon as any} size={isSmall ? 10 : 12} color={col} />
+      </View>
+    </View>
+  );
+}
+
+const cellStyles = StyleSheet.create({
+  wrapper: { width: DAY_W, height: 44, alignItems: 'center', justifyContent: 'center' },
+  pill: {
+    width: CELL_SZ, height: CELL_SZ, borderRadius: 6,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  weekend: { width: 14, height: 2, borderRadius: 1, backgroundColor: Colors.gray300 },
+});
+
+// ─── Dropdown Modal ───────────────────────────────────────────────────────────
+function DropdownModal({ visible, options, selected, onSelect, onClose }: {
+  visible: boolean; options: string[]; selected: string;
+  onSelect: (v: string) => void; onClose: () => void;
+}) {
+  return (
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+      <TouchableOpacity style={dropStyles.overlay} activeOpacity={1} onPress={onClose}>
+        <View style={[dropStyles.sheet, Shadow.lg]}>
+          {options.map(opt => (
+            <TouchableOpacity key={opt} style={dropStyles.item} onPress={() => { onSelect(opt); onClose(); }}>
+              <Text style={[dropStyles.itemText, opt === selected && dropStyles.itemSelected]}>{opt}</Text>
+              {opt === selected && <Ionicons name="checkmark" size={16} color={Colors.primary} />}
+            </TouchableOpacity>
+          ))}
+        </View>
+      </TouchableOpacity>
+    </Modal>
+  );
+}
+
+const dropStyles = StyleSheet.create({
+  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.3)', justifyContent: 'center', paddingHorizontal: 32 },
+  sheet: { backgroundColor: Colors.white, borderRadius: Radius.lg, overflow: 'hidden' },
+  item: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 14, paddingHorizontal: 20, borderBottomWidth: 1, borderBottomColor: Colors.gray100 },
+  itemText: { fontSize: Typography.fontSize.sm, color: Colors.gray700 },
+  itemSelected: { fontWeight: '700', color: Colors.primary },
+});
+
+// ─── Daily Report Tab ─────────────────────────────────────────────────────────
+function DailyReportTab() {
+  const today = new Date();
+  const records = mockAttendance.slice(0, 5);
+  return (
+    <View style={{ paddingTop: 12 }}>
+      <Text style={dailyStyles.title}>
+        {today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+      </Text>
+      {records.map((r, i) => {
+        const emp = mockEmployees.find(e => e.id === 'MM-003');
+        const isPresent = r.status === 'present' || r.status === 'active';
+        return (
+          <View key={i} style={[dailyStyles.row, Shadow.sm]}>
+            <View style={[dailyStyles.avatar, { backgroundColor: AVATAR_COLORS[0] }]}>
+              <Text style={dailyStyles.avatarText}>{emp?.initials ?? 'VM'}</Text>
+            </View>
+            <View style={{ flex: 1, minWidth: 0 }}>
+              <Text style={dailyStyles.name} numberOfLines={1}>{emp?.name ?? 'Venil Mottana'}</Text>
+              <Text style={dailyStyles.time} numberOfLines={1}>{r.checkIn} → {r.checkOut}</Text>
+            </View>
+            <View style={[dailyStyles.badge, { backgroundColor: isPresent ? Colors.successLight : Colors.dangerLight }]}>
+              <Text style={[dailyStyles.badgeText, { color: isPresent ? Colors.success : Colors.danger }]}>
+                {isPresent ? 'Present' : r.status.charAt(0).toUpperCase() + r.status.slice(1)}
+              </Text>
+            </View>
+          </View>
+        );
+      })}
+    </View>
+  );
+}
+
+const dailyStyles = StyleSheet.create({
+  title: { fontSize: Typography.fontSize.sm, fontWeight: '600', color: Colors.gray600, marginBottom: 12 },
+  row: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.white, borderRadius: Radius.lg, padding: isSmall ? 10 : 14, marginBottom: 10, gap: isSmall ? 8 : 12, borderWidth: 1, borderColor: Colors.gray100 },
+  avatar: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  avatarText: { fontSize: Typography.fontSize.sm, fontWeight: '700', color: '#fff' },
+  name: { fontSize: Typography.fontSize.sm, fontWeight: '700', color: Colors.gray900 },
+  time: { fontSize: Typography.fontSize.xs, color: Colors.gray500, marginTop: 2 },
+  badge: { paddingHorizontal: isSmall ? 7 : 10, paddingVertical: 4, borderRadius: Radius.full, flexShrink: 0 },
+  badgeText: { fontSize: Typography.fontSize.xs, fontWeight: '700' },
+});
+
+// ─── Monthly Overview Tab ─────────────────────────────────────────────────────
+function MonthlyOverviewTab({ year, month }: { year: number; month: number }) {
+  const [search, setSearch] = useState('');
+  const [shift, setShift] = useState(SHIFTS[0]);
+  const [showShiftDrop, setShowShiftDrop] = useState(false);
+
+  const days = getDaysInMonth(year, month);
+  const dayNumbers = Array.from({ length: days }, (_, i) => i + 1);
+
+  const filtered = useMemo(() =>
+    mockEmployees.filter(e => e.name.toLowerCase().includes(search.toLowerCase())),
+    [search]
+  );
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
-
-      {/* Gradient Header */}
-      <View style={styles.header}>
-        <View style={styles.headerBg} />
-        <View style={styles.headerTop}>
-          <Text style={styles.headerTitle}>Attendance</Text>
-          <TouchableOpacity onPress={() => router.push('/attendance/calendar')}>
-            <Ionicons name="calendar-outline" size={24} color={Colors.white} />
+    <View style={{ flex: 1 }}>
+      {/* Filters */}
+      <View style={[matrixStyles.filterCard, Shadow.sm]}>
+        <View style={matrixStyles.filterRow}>
+          <View style={matrixStyles.searchBox}>
+            <Ionicons name="search-outline" size={15} color={Colors.gray400} />
+            <TextInput
+              style={matrixStyles.searchInput}
+              placeholder="Search employee..."
+              placeholderTextColor={Colors.gray400}
+              value={search}
+              onChangeText={setSearch}
+            />
+          </View>
+          <TouchableOpacity style={matrixStyles.dropdown} onPress={() => setShowShiftDrop(true)} activeOpacity={0.8}>
+            <Text style={matrixStyles.dropText} numberOfLines={1}>{shift}</Text>
+            <Ionicons name="chevron-down" size={13} color={Colors.gray500} />
           </TouchableOpacity>
-        </View>
-
-        <View style={styles.checkWidget}>
-          <View style={styles.checkStatus}>
-            <View style={[styles.statusDot, { backgroundColor: checkedIn ? Colors.success : Colors.gray400 }]} />
-            <Text style={styles.statusText}>{checkedIn ? 'Currently Working' : 'Not Checked In'}</Text>
-          </View>
-          <TouchableOpacity
-            style={[styles.mainCheckBtn, { backgroundColor: checkedIn ? Colors.danger : Colors.success }]}
-            onPress={() => setCheckedIn(!checkedIn)} activeOpacity={0.85}
-          >
-            <Ionicons name={checkedIn ? 'log-out-outline' : 'log-in-outline'} size={22} color={Colors.white} />
-            <Text style={styles.mainCheckText}>{checkedIn ? 'Check Out' : 'Check In'}</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Today Stats */}
-        <View style={styles.todayStats}>
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>09:18</Text>
-            <Text style={styles.statLabel}>Check In</Text>
-          </View>
-          <View style={styles.statDivider} />
-          <View style={styles.statItem}>
-            <Text style={[styles.statValue, { color: Colors.warningLight }]}>--:--</Text>
-            <Text style={styles.statLabel}>Check Out</Text>
-          </View>
-          <View style={styles.statDivider} />
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>00:52</Text>
-            <Text style={styles.statLabel}>Working</Text>
-          </View>
         </View>
       </View>
 
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-
-        {/* Week Overview */}
-        <Card>
-          <Text style={styles.sectionTitle}>This Week</Text>
-          <View style={styles.weekRow}>
-            {WEEK_DAYS.map((day, i) => {
-              const status = i === 0 ? 'active' : i === 5 || i === 6 ? 'weekend' : i === 4 ? 'absent' : 'present';
-              const color = status === 'present' ? Colors.success : status === 'active' ? Colors.primary : status === 'absent' ? Colors.danger : Colors.gray300;
-              return (
-                <View key={i} style={styles.weekDay}>
-                  <Text style={styles.weekDayLabel}>{day}</Text>
-                  <View style={[styles.weekDayDot, { backgroundColor: color }]}>
-                    {status === 'active' && <View style={styles.weekDayPulse} />}
-                  </View>
+      {/* Matrix Table */}
+      <View style={[matrixStyles.tableCard, Shadow.sm]}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} bounces={false}>
+          <View>
+            {/* Header row */}
+            <View style={matrixStyles.headerRow}>
+              <View style={matrixStyles.stickyCol}>
+                <Text style={matrixStyles.headerEmpText}>EMPLOYEE</Text>
+              </View>
+              {dayNumbers.map(d => (
+                <View key={d} style={[matrixStyles.dayCol, isWeekend(year, month, d) && matrixStyles.weekendCol]}>
+                  <Text style={[matrixStyles.dayName, isWeekend(year, month, d) && matrixStyles.weekendText]}>
+                    {getDayName(year, month, d)}
+                  </Text>
+                  <Text style={[matrixStyles.dayNum, isWeekend(year, month, d) && matrixStyles.weekendText]}>
+                    {String(d).padStart(2, '0')}
+                  </Text>
                 </View>
-              );
-            })}
-          </View>
-          <View style={styles.weekLegend}>
-            {[['Present', Colors.success], ['Active', Colors.primary], ['Absent', Colors.danger], ['Weekend', Colors.gray300]].map(([label, color]) => (
-              <View key={label} style={styles.legendItem}>
-                <View style={[styles.legendDot, { backgroundColor: color as string }]} />
-                <Text style={styles.legendText}>{label}</Text>
-              </View>
-            ))}
-          </View>
-        </Card>
-
-        {/* Monthly KPIs */}
-        <SectionHeader title="June 2025" />
-        <View style={styles.kpiGrid}>
-          {[
-            { label: 'Present', value: '18', icon: 'checkmark-circle-outline', color: Colors.success, bg: Colors.successLight },
-            { label: 'Absent',  value: '1',  icon: 'close-circle-outline',     color: Colors.danger,  bg: Colors.dangerLight },
-            { label: 'Late',    value: '2',  icon: 'alarm-outline',             color: Colors.warning, bg: Colors.warningLight },
-            { label: 'WFH',     value: '3',  icon: 'home-outline',              color: Colors.accent,  bg: Colors.infoLight },
-          ].map(({ label, value, icon, color, bg }) => (
-            <View key={label} style={styles.kpiCell}>
-              <View style={[styles.kpiIcon, { backgroundColor: bg }]}>
-                <Ionicons name={icon as any} size={18} color={color} />
-              </View>
-              <View>
-                <Text style={styles.kpiValue}>{value}</Text>
-                <Text style={styles.kpiLabel}>{label}</Text>
-              </View>
+              ))}
             </View>
+
+            {/* Employee rows */}
+            <ScrollView style={{ maxHeight: 360 }} showsVerticalScrollIndicator={false} nestedScrollEnabled>
+              {filtered.map((emp, idx) => {
+                const statuses = getEmployeeMonthStatus(emp.id, year, month);
+                return (
+                  <View key={emp.id} style={[matrixStyles.dataRow, idx % 2 === 0 && matrixStyles.rowEven]}>
+                    <View style={matrixStyles.stickyCol}>
+                      <View style={[matrixStyles.empAvatar, { backgroundColor: AVATAR_COLORS[idx % AVATAR_COLORS.length] }]}>
+                        <Text style={matrixStyles.empAvatarText}>{emp.initials}</Text>
+                      </View>
+                      <Text style={matrixStyles.empName} numberOfLines={1}>{emp.name}</Text>
+                    </View>
+                    {dayNumbers.map(d => (
+                      <View key={d} style={[matrixStyles.dayCol, isWeekend(year, month, d) && matrixStyles.weekendCol]}>
+                        <StatusCell status={statuses[d] ?? 'absent'} />
+                      </View>
+                    ))}
+                  </View>
+                );
+              })}
+            </ScrollView>
+          </View>
+        </ScrollView>
+      </View>
+
+      <DropdownModal
+        visible={showShiftDrop}
+        options={SHIFTS}
+        selected={shift}
+        onSelect={setShift}
+        onClose={() => setShowShiftDrop(false)}
+      />
+    </View>
+  );
+}
+
+const matrixStyles = StyleSheet.create({
+  filterCard: {
+    backgroundColor: Colors.white, borderRadius: Radius.lg,
+    padding: 12, marginBottom: 12,
+    borderWidth: 1, borderColor: Colors.gray100,
+  },
+  filterRow: { flexDirection: 'row', gap: 8, alignItems: 'center' },
+  searchBox: {
+    flex: 1, flexDirection: 'row', alignItems: 'center',
+    backgroundColor: Colors.gray50, borderRadius: Radius.md,
+    paddingHorizontal: 10, height: 38, gap: 6,
+    borderWidth: 1, borderColor: Colors.gray200,
+  },
+  searchInput: { flex: 1, fontSize: Typography.fontSize.sm, color: Colors.gray900, height: 38 },
+  dropdown: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    backgroundColor: Colors.gray50, borderRadius: Radius.md,
+    paddingHorizontal: isSmall ? 8 : 12, height: 38,
+    minWidth: isSmall ? 88 : 108,
+    borderWidth: 1, borderColor: Colors.gray200,
+  },
+  dropText: { flex: 1, fontSize: isSmall ? 11 : Typography.fontSize.sm, color: Colors.gray700, fontWeight: '600' },
+
+  tableCard: {
+    backgroundColor: Colors.white, borderRadius: Radius.lg,
+    borderWidth: 1, borderColor: Colors.gray100, overflow: 'hidden',
+  },
+  headerRow: { flexDirection: 'row', backgroundColor: '#F1F5F9', borderBottomWidth: 1.5, borderBottomColor: Colors.gray200 },
+  dataRow: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: Colors.gray100 },
+  rowEven: { backgroundColor: '#F7FBFF' },
+
+  stickyCol: {
+    width: STICKY_W, paddingHorizontal: isSmall ? 8 : 10, paddingVertical: 0,
+    height: 44, flexDirection: 'row', alignItems: 'center', gap: 6,
+    borderRightWidth: 1, borderRightColor: Colors.gray200,
+    backgroundColor: Colors.white,
+  },
+  headerEmpText: { fontSize: 9, fontWeight: '700', color: Colors.gray600, letterSpacing: 0.7 },
+
+  dayCol: { width: DAY_W, alignItems: 'center', justifyContent: 'center', paddingVertical: 6 },
+  weekendCol: { backgroundColor: '#F8FAFC' },
+  dayName: { fontSize: 7, fontWeight: '700', color: Colors.gray500, letterSpacing: 0.4, textTransform: 'uppercase' },
+  dayNum: { fontSize: isSmall ? 10 : 11, fontWeight: '800', color: Colors.gray800, marginTop: 1 },
+  weekendText: { color: Colors.gray400 },
+
+  empAvatar: { width: 26, height: 26, borderRadius: 13, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  empAvatarText: { fontSize: 9, fontWeight: '700', color: '#fff' },
+  empName: { flex: 1, fontSize: isSmall ? 10 : 11, fontWeight: '600', color: Colors.gray900 },
+});
+
+// ─── Main Screen ──────────────────────────────────────────────────────────────
+export default function AttendanceScreen() {
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<TabId>('monthly');
+  const [selectedMonth, setSelectedMonth] = useState(5);
+  const [selectedYear] = useState(2025);
+  const [showMonthDrop, setShowMonthDrop] = useState(false);
+
+  const totalEmployees = mockEmployees.length;
+  const workingDays = useMemo(() => {
+    const days = getDaysInMonth(selectedYear, selectedMonth);
+    let count = 0;
+    for (let d = 1; d <= days; d++) if (!isWeekend(selectedYear, selectedMonth, d)) count++;
+    return count;
+  }, [selectedYear, selectedMonth]);
+
+  const totalPresent = mockEmployees.reduce((sum, emp) => {
+    const statuses = getEmployeeMonthStatus(emp.id, selectedYear, selectedMonth);
+    return sum + Object.values(statuses).filter(s => s === 'present' || s === 'active').length;
+  }, 0);
+
+  const totalAbsent = mockEmployees.reduce((sum, emp) => {
+    const statuses = getEmployeeMonthStatus(emp.id, selectedYear, selectedMonth);
+    return sum + Object.values(statuses).filter(s => s === 'absent').length;
+  }, 0);
+
+  return (
+    <View style={styles.root}>
+      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
+
+      {/* Header */}
+      <LinearGradient colors={['#56CCF2', '#4DA8DA']} style={styles.header} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+        <View style={styles.blob} />
+        <View style={styles.headerTop}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+            <Ionicons name="arrow-back" size={20} color={Colors.white} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Attendance</Text>
+          <TouchableOpacity
+            style={styles.monthBtn}
+            onPress={() => setShowMonthDrop(true)}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.monthBtnText}>{MONTHS[selectedMonth].slice(0, 3)} {selectedYear}</Text>
+            <Ionicons name="chevron-down" size={13} color={Colors.white} />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.curve} />
+      </LinearGradient>
+
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Tabs */}
+        <View style={styles.tabBar}>
+          {(['monthly', 'daily'] as TabId[]).map(tab => (
+            <TouchableOpacity
+              key={tab}
+              style={[styles.tab, activeTab === tab && styles.tabActive]}
+              onPress={() => setActiveTab(tab)}
+              activeOpacity={0.8}
+            >
+              <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>
+                {tab === 'monthly' ? 'Monthly Overview' : 'Daily Report'}
+              </Text>
+            </TouchableOpacity>
           ))}
         </View>
 
-        {/* Working Hours Card */}
-        <Card>
-          <SectionHeader title="Avg. Working Hours" />
-          {[
-            { label: 'Today', hours: '00:52', max: 9, done: 0.1 },
-            { label: 'This Week', hours: '42:15', max: 45, done: 93.9 },
-            { label: 'This Month', hours: '156:30', max: 180, done: 87 },
-          ].map(({ label, hours, done }) => (
-            <View key={label} style={styles.hoursRow}>
-              <View style={styles.hoursInfo}>
-                <Text style={styles.hoursLabel}>{label}</Text>
-                <Text style={styles.hoursValue}>{hours}</Text>
-              </View>
-              <View style={{ flex: 1, marginLeft: 12 }}>
-                <ProgressBar progress={done} color={done > 80 ? Colors.success : Colors.warning} />
-              </View>
-            </View>
-          ))}
-        </Card>
+        {/* Summary Cards */}
+        <View style={styles.summaryGrid}>
+          <SummaryCard icon="people" iconBg="#4DA8DA" count={totalEmployees} label="Total Employees" />
+          <SummaryCard icon="close-circle" iconBg="#F87171" count={totalAbsent} label="Absent Days" />
+          <SummaryCard icon="checkmark-circle" iconBg="#34D399" count={totalPresent} label="Present Days" />
+          <SummaryCard icon="briefcase" iconBg="#FBBF24" count={workingDays} label="Working Days" />
+        </View>
 
-        {/* Attendance History */}
-        <SectionHeader title="Recent History" actionLabel="View All" onAction={() => router.push('/attendance/history')} />
-        {mockAttendance.slice(0, 5).map((record, i) => (
-          <Card key={i} onPress={() => router.push('/attendance/history')}>
-            <View style={styles.historyRow}>
-              <View style={styles.historyDate}>
-                <Text style={styles.historyDateNum}>{record.date.split('-')[2]}</Text>
-                <Text style={styles.historyDateMonth}>
-                  {new Date(record.date).toLocaleDateString('en', { month: 'short' })}
-                </Text>
-              </View>
-              <View style={styles.historyInfo}>
-                <View style={styles.historyTimeRow}>
-                  <View style={styles.historyTimeItem}>
-                    <Ionicons name="arrow-up-circle-outline" size={13} color={Colors.success} />
-                    <Text style={styles.historyTime}> {record.checkIn}</Text>
-                  </View>
-                  <View style={styles.historyTimeItem}>
-                    <Ionicons name="arrow-down-circle-outline" size={13} color={Colors.danger} />
-                    <Text style={styles.historyTime}> {record.checkOut}</Text>
-                  </View>
-                </View>
-                <View style={styles.historyMeta}>
-                  <View style={styles.historyTimeItem}>
-                    <Ionicons name="time-outline" size={12} color={Colors.gray500} />
-                    <Text style={styles.historyHours}> {record.hours}</Text>
-                  </View>
-                  <View style={styles.historyTimeItem}>
-                    <Ionicons name="location-outline" size={12} color={Colors.gray500} />
-                    <Text style={styles.historyLocation}> {record.location}</Text>
-                  </View>
-                </View>
-              </View>
-              <Badge label={record.status} variant={statusToVariant[record.status] || 'neutral'} />
-            </View>
-          </Card>
-        ))}
-
-        {/* Regularization CTA */}
-        <Card style={{ backgroundColor: Colors.overlayLight }}>
-          <View style={styles.regularRow}>
-            <View>
-              <Text style={styles.regularTitle}>Missing Attendance?</Text>
-              <Text style={styles.regularSub}>Submit a regularization request</Text>
-            </View>
-            <Button title="Apply" variant="primary" size="sm" onPress={() => {}} />
-          </View>
-        </Card>
+        {/* Tab Content */}
+        {activeTab === 'monthly'
+          ? <MonthlyOverviewTab year={selectedYear} month={selectedMonth} />
+          : <DailyReportTab />
+        }
 
         <View style={{ height: 100 }} />
       </ScrollView>
+
+      {/* Month Dropdown */}
+      <DropdownModal
+        visible={showMonthDrop}
+        options={MONTHS}
+        selected={MONTHS[selectedMonth]}
+        onSelect={v => setSelectedMonth(MONTHS.indexOf(v))}
+        onClose={() => setShowMonthDrop(false)}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.white },
+  root: { flex: 1, backgroundColor: Colors.background },
 
   header: {
-    backgroundColor: Colors.primary,
     paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 24) + 8 : 52,
     paddingHorizontal: Spacing[4],
-    paddingBottom: Spacing[4],
+    paddingBottom: 46,
     overflow: 'hidden',
   },
-  headerBg: {
-    position: 'absolute', width: 260, height: 260, borderRadius: 130,
-    backgroundColor: 'rgba(255,255,255,0.10)', top: -80, right: -50,
+  blob: {
+    position: 'absolute', width: 220, height: 220, borderRadius: 110,
+    backgroundColor: 'rgba(255,255,255,0.10)', top: -70, right: -40,
   },
-  headerTop: {
-    flexDirection: 'row', justifyContent: 'space-between',
-    alignItems: 'center', marginBottom: Spacing[3],
+  headerTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  backBtn: { width: 34, height: 34, borderRadius: 17, backgroundColor: 'rgba(255,255,255,0.2)', alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { fontSize: Typography.fontSize.lg, fontWeight: '800', color: Colors.white },
+  monthBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    backgroundColor: 'rgba(255,255,255,0.2)', paddingVertical: 6,
+    paddingHorizontal: isSmall ? 8 : 12,
+    borderRadius: Radius.full, borderWidth: 1, borderColor: 'rgba(255,255,255,0.3)',
   },
-  headerTitle: { fontSize: Typography.fontSize.lg, fontWeight: '800', color: Colors.white, letterSpacing: -0.3 },
+  monthBtnText: { fontSize: isSmall ? 11 : Typography.fontSize.sm, fontWeight: '700', color: Colors.white },
+  curve: { position: 'absolute', bottom: -1, left: 0, right: 0, height: 36, backgroundColor: Colors.background, borderTopLeftRadius: 28, borderTopRightRadius: 28 },
 
-  checkWidget: { alignItems: 'center', marginBottom: Spacing[4] },
-  checkStatus: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
-  statusDot: { width: 8, height: 8, borderRadius: 4, marginRight: 8 },
-  statusText: { fontSize: Typography.fontSize.sm, color: 'rgba(255,255,255,0.8)', fontWeight: '600' },
+  scroll: { flex: 1, marginTop: -24 },
+  scrollContent: { paddingHorizontal: isSmall ? 12 : Spacing[4], paddingTop: 16, paddingBottom: 40 },
 
-  mainCheckBtn: {
-    flexDirection: 'row', alignItems: 'center',
-    paddingHorizontal: 36, paddingVertical: 15,
-    borderRadius: Radius.full, gap: 8, ...Shadow.md,
-    minHeight: 52,
-  },
-  mainCheckText: { fontSize: Typography.fontSize.base, fontWeight: '700', color: Colors.white },
+  tabBar: { flexDirection: 'row', backgroundColor: Colors.white, borderRadius: Radius.lg, padding: 4, marginBottom: 14, borderWidth: 1, borderColor: Colors.gray100, ...Shadow.sm as any },
+  tab: { flex: 1, paddingVertical: 9, alignItems: 'center', borderRadius: Radius.md },
+  tabActive: { borderBottomWidth: 3, borderBottomColor: Colors.primary, backgroundColor: Colors.overlayLight },
+  tabText: { fontSize: isSmall ? 11 : Typography.fontSize.sm, fontWeight: '600', color: Colors.gray500 },
+  tabTextActive: { color: Colors.primary },
 
-  todayStats: { flexDirection: 'row', backgroundColor: 'rgba(255,255,255,0.12)', borderRadius: Radius.lg, paddingVertical: 12 },
-  statItem: { flex: 1, alignItems: 'center' },
-  statValue: { fontSize: Typography.fontSize.lg, fontWeight: '700', color: Colors.white },
-  statLabel: { fontSize: Typography.fontSize.xs, color: 'rgba(255,255,255,0.6)', marginTop: 2 },
-  statDivider: { width: 1, backgroundColor: 'rgba(255,255,255,0.2)' },
-
-  scroll: { flex: 1 },
-  scrollContent: { padding: Spacing[4] },
-
-  sectionTitle: { fontSize: Typography.fontSize.base, fontWeight: '700', color: Colors.gray900, marginBottom: 16 },
-
-  weekRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
-  weekDay: { alignItems: 'center', gap: 8 },
-  weekDayLabel: { fontSize: Typography.fontSize.xs, color: Colors.gray500, fontWeight: '600' },
-  weekDayDot: { width: 32, height: 32, borderRadius: 16, position: 'relative' },
-  weekDayPulse: {
-    position: 'absolute', top: -3, left: -3, right: -3, bottom: -3,
-    borderRadius: 20, borderWidth: 2, borderColor: Colors.primary + '60',
-  },
-  weekLegend: { flexDirection: 'row', justifyContent: 'space-around' },
-  legendItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  legendDot: { width: 8, height: 8, borderRadius: 4 },
-  legendText: { fontSize: Typography.fontSize.xs, color: Colors.gray500 },
-
-  kpiGrid: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: Spacing[3], gap: 8 },
-  kpiCell: {
-    width: '48%', flexGrow: 1,
-    backgroundColor: Colors.white, borderRadius: Radius.lg,
-    padding: Spacing[3], flexDirection: 'row', alignItems: 'center',
-    gap: 10, borderWidth: 1, borderColor: Colors.gray100, ...Shadow.sm,
-  },
-  kpiIcon: { width: 40, height: 40, borderRadius: Radius.md, alignItems: 'center', justifyContent: 'center' },
-  kpiValue: { fontSize: Typography.fontSize.lg, fontWeight: '800', color: Colors.gray900 },
-  kpiLabel: { fontSize: Typography.fontSize.xs, color: Colors.gray500, marginTop: 2 },
-
-
-  hoursRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
-  hoursInfo: { width: 110 },
-  hoursLabel: { fontSize: Typography.fontSize.xs, color: Colors.gray500, marginBottom: 2 },
-  hoursValue: { fontSize: Typography.fontSize.sm, fontWeight: '700', color: Colors.gray900 },
-
-  historyRow: { flexDirection: 'row', alignItems: 'center' },
-  historyDate: {
-    width: 44, height: 44, borderRadius: Radius.md,
-    backgroundColor: Colors.overlayLight, alignItems: 'center',
-    justifyContent: 'center', marginRight: 12,
-  },
-  historyDateNum: { fontSize: Typography.fontSize.md, fontWeight: '700', color: Colors.primary },
-  historyDateMonth: { fontSize: Typography.fontSize.xs, color: Colors.primary },
-  historyInfo: { flex: 1 },
-  historyTimeRow: { flexDirection: 'row', gap: 12, marginBottom: 4 },
-  historyTimeItem: { flexDirection: 'row', alignItems: 'center' },
-  historyTime: { fontSize: Typography.fontSize.xs, color: Colors.gray700, fontWeight: '600' },
-  historyMeta: { flexDirection: 'row', gap: 12 },
-  historyHours: { fontSize: Typography.fontSize.xs, color: Colors.gray500 },
-  historyLocation: { fontSize: Typography.fontSize.xs, color: Colors.gray500 },
-
-  regularRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  regularTitle: { fontSize: Typography.fontSize.base, fontWeight: '700', color: Colors.primary },
-  regularSub: { fontSize: Typography.fontSize.xs, color: Colors.gray600, marginTop: 2 },
+  summaryGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 14 },
 });

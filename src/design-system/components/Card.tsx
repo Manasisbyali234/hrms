@@ -133,8 +133,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     borderRadius: Radius.lg,
     marginBottom: Spacing[3],
-    borderWidth: 1,
-    borderColor: Colors.gray100,
   },
   kpiCard: {
     backgroundColor: Colors.white,
@@ -143,8 +141,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     margin: 4,
-    borderWidth: 1,
-    borderColor: Colors.gray100,
     gap: 10,
   },
   kpiIcon: {

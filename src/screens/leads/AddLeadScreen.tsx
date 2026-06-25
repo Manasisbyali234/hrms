@@ -601,7 +601,7 @@ const s = StyleSheet.create({
   statCount: { fontSize: 20, fontWeight: '800', lineHeight: 24 },
   statLabel: { fontSize: 10, fontWeight: '600', marginTop: 2, textAlign: 'center' },
 
-  toolbar: { backgroundColor: Colors.white, borderRadius: 16, padding: 12, marginBottom: 14, borderWidth: 1, borderColor: Colors.gray100, ...Shadow.sm, gap: 10, zIndex: 100 },
+  toolbar: { backgroundColor: Colors.white, borderRadius: 16, padding: 12, marginBottom: 14, ...Shadow.sm, gap: 10, zIndex: 100 },
   searchWrap: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: Colors.gray50, borderRadius: 10, borderWidth: 1.5, borderColor: Colors.gray200, paddingHorizontal: 12, height: 42 },
   searchInput: { flex: 1, fontSize: 13, color: Colors.gray900, paddingVertical: 0 },
   filterRow: { flexDirection: 'row', gap: 6, zIndex: 99 },
@@ -666,7 +666,7 @@ const s = StyleSheet.create({
   mfCreate: { flex: 2, height: 48, borderRadius: 12, backgroundColor: Colors.primary, alignItems: 'center', justifyContent: 'center', ...Shadow.sm },
   mfCreateTxt: { fontSize: 14, fontWeight: '700', color: '#fff' },
 
-  section: { backgroundColor: Colors.white, borderRadius: 16, padding: 16, marginBottom: 14, borderWidth: 1, borderColor: Colors.gray100, ...Shadow.sm },
+  section: { backgroundColor: Colors.white, borderRadius: 16, padding: 16, marginBottom: 14, ...Shadow.sm },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 16 },
   sectionIcon: { width: 26, height: 26, borderRadius: 8, backgroundColor: Colors.primary + '15', alignItems: 'center', justifyContent: 'center' },
   sectionTitle: { fontSize: 13, fontWeight: '700', color: Colors.gray700, letterSpacing: 0.3 },

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Typography, Spacing, Radius, Shadow } from '../../design-system/tokens';
+import { Colors, Typography, Spacing, Radius, Shadow, IconBox } from '../../design-system/tokens';
 import { Card, ProgressBar } from '../../design-system/components/Card';
 import { Badge, statusToVariant } from '../../design-system/components/Badge';
 import { Avatar } from '../../design-system/components/Avatar';
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
   filterText: { fontSize: Typography.fontSize.sm, color: Colors.gray600, fontWeight: '600' },
   filterTextActive: { color: Colors.white },
   projectHeader: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 10 },
-  projectIconBox: { width: 44, height: 44, borderRadius: Radius.md, backgroundColor: Colors.overlayLight, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
+  projectIconBox: { width: IconBox.size, height: IconBox.size, borderRadius: IconBox.radius, backgroundColor: IconBox.bg, alignItems: 'center', justifyContent: 'center', marginRight: 12, ...IconBox.shadow as any },
   projectMeta: { flex: 1 },
   projectName: { fontSize: Typography.fontSize.base, fontWeight: '700', color: Colors.gray900 },
   projectClient: { fontSize: Typography.fontSize.xs, color: Colors.gray500, marginTop: 2 },

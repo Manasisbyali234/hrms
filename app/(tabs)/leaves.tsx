@@ -1,2 +1,2 @@
-import LeaveScreen from '../../src/screens/leaves/LeaveScreen';
-export default LeaveScreen;
+import LeavesManagementScreen from '../../src/screens/leaves/LeavesManagementScreen';
+export default LeavesManagementScreen;

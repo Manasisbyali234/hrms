@@ -7,7 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Circle } from 'react-native-svg';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Typography, Spacing, Radius, Shadow } from '../../design-system/tokens';
+import { Colors, Typography, Spacing, Radius, Shadow, IconBox } from '../../design-system/tokens';
 import { SectionHeader } from '../../design-system/components/Card';
 import { Badge, statusToVariant } from '../../design-system/components/Badge';
 import { mockLeaves, currentUser } from '../../data/mockData';
@@ -25,7 +25,7 @@ function RingProgress({ value, total, color, size = 64 }: { value: number; total
         stroke={color} strokeWidth={7} fill="none"
         strokeDasharray={`${progress} ${circ}`}
         strokeLinecap="round"
-        rotation="-90" origin={`${size / 2}, ${size / 2}`}
+        transform={`rotate(-90, ${size / 2}, ${size / 2})`}
       />
     </Svg>
   );
@@ -198,7 +198,7 @@ export default function LeaveScreen() {
               <View style={[styles.leaveAccent, { backgroundColor: accentColor }]} />
               <View style={styles.leaveBody}>
                 <View style={styles.leaveTop}>
-                  <View style={[styles.leaveIconBox, { backgroundColor: accentColor + '15' }]}>
+                  <View style={styles.leaveIconBox}>
                     <Ionicons name={iconName} size={18} color={accentColor} />
                   </View>
                   <View style={{ flex: 1 }}>
@@ -232,7 +232,7 @@ export default function LeaveScreen() {
 
 // ── Styles ────────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.white },
+  root: { flex: 1, backgroundColor: Colors.background },
 
   // Header
   header: {
@@ -291,7 +291,6 @@ const styles = StyleSheet.create({
     flex: 1, backgroundColor: Colors.white,
     borderRadius: Radius.lg, paddingVertical: 16,
     alignItems: 'center',
-    borderWidth: 1, borderColor: Colors.gray100,
   },
   ringWrap: { position: 'relative', alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
   ringCenter: { position: 'absolute', alignItems: 'center', justifyContent: 'center' },
@@ -306,15 +305,14 @@ const styles = StyleSheet.create({
     borderRadius: Radius.lg,
     marginBottom: 16,
     overflow: 'hidden',
-    borderWidth: 1, borderColor: Colors.gray100,
   },
   upcomingAccent: { width: 4 },
   upcomingBody: { flex: 1, padding: 14 },
   upcomingTop: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, marginBottom: 10 },
   upcomingIconWrap: {
-    width: 32, height: 32, borderRadius: 10,
-    backgroundColor: Colors.warningLight,
-    alignItems: 'center', justifyContent: 'center',
+    width: IconBox.sizeSmall, height: IconBox.sizeSmall, borderRadius: IconBox.radius,
+    backgroundColor: IconBox.bg, alignItems: 'center', justifyContent: 'center',
+    ...IconBox.shadow as any,
   },
   upcomingType: { fontSize: Typography.fontSize.sm, fontWeight: '700', color: Colors.gray900 },
   upcomingDates: { fontSize: Typography.fontSize.xs, color: Colors.gray500, marginTop: 1 },
@@ -346,12 +344,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     borderRadius: Radius.lg, marginBottom: 10,
     overflow: 'hidden',
-    borderWidth: 1, borderColor: Colors.gray100,
   },
   leaveAccent: { width: 4 },
   leaveBody: { flex: 1, padding: 14 },
   leaveTop: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 10 },
-  leaveIconBox: { width: 38, height: 38, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
+  leaveIconBox: { width: IconBox.sizeSmall, height: IconBox.sizeSmall, borderRadius: IconBox.radius, backgroundColor: IconBox.bg, alignItems: 'center', justifyContent: 'center', ...IconBox.shadow as any },
   leaveType: { fontSize: Typography.fontSize.base, fontWeight: '700', color: Colors.gray900 },
   leaveReason: { fontSize: Typography.fontSize.xs, color: Colors.gray400, marginTop: 1 },
   leaveMeta: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },

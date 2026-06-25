@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Typography, Spacing, Radius, Shadow } from '../../design-system/tokens';
+import { Colors, Typography, Spacing, Radius, Shadow, IconBox } from '../../design-system/tokens';
 import { mockNotifications } from '../../data/mockData';
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
@@ -23,7 +23,7 @@ function NotifCard({ n, unread }: { n: Notification; unread: boolean }) {
   return (
     <View style={[styles.card, unread && styles.cardUnread]}>
       {unread && <View style={styles.unreadBar} />}
-      <View style={[styles.iconBox, { backgroundColor: unread ? cfg.bg : Colors.gray100 }]}>
+      <View style={[styles.iconBox, { backgroundColor: IconBox.bg }]}>
         <Ionicons name={cfg.icon} size={20} color={unread ? cfg.color : Colors.gray400} />
       </View>
       <View style={styles.cardBody}>
@@ -202,8 +202,6 @@ const styles = StyleSheet.create({
     borderRadius: Radius.lg,
     padding: Spacing[3],
     marginBottom: Spacing[2],
-    borderWidth: 1,
-    borderColor: Colors.gray100,
     overflow: 'hidden',
     ...Shadow.sm,
   },
@@ -220,12 +218,14 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: Radius.lg,
   },
   iconBox: {
-    width: 42, height: 42,
-    borderRadius: Radius.md,
+    width: IconBox.size, height: IconBox.size,
+    borderRadius: IconBox.radius,
+    backgroundColor: IconBox.bg,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: Spacing[3],
     flexShrink: 0,
+    ...IconBox.shadow as any,
   },
   cardBody: { flex: 1 },
   cardTopRow: {

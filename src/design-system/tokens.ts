@@ -42,7 +42,7 @@ export const Colors = {
   gray900: '#0D2638',
 
   // Background
-  background: '#EEF6FC',
+  background: '#F3F4F6',
   cardBg: '#FFFFFF',
 
   // kept for compat
@@ -118,39 +118,48 @@ export const Radius = {
 import { Platform } from 'react-native';
 
 export const Shadow = {
-  sm: Platform.select({
-    web: { boxShadow: '0px 2px 6px rgba(77,168,218,0.08)' },
-    default: {
-      shadowColor: '#4DA8DA',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.08,
-      shadowRadius: 6,
-      elevation: 2,
-    },
-  }),
-  md: Platform.select({
-    web: { boxShadow: '0px 4px 14px rgba(77,168,218,0.14)' },
-    default: {
-      shadowColor: '#4DA8DA',
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.14,
-      shadowRadius: 14,
-      elevation: 5,
-    },
-  }),
-  lg: Platform.select({
-    web: { boxShadow: '0px 8px 24px rgba(46,134,181,0.18)' },
-    default: {
-      shadowColor: '#2E86B5',
-      shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: 0.18,
-      shadowRadius: 24,
-      elevation: 10,
-    },
-  }),
+  sm: Platform.OS === 'web'
+    ? { boxShadow: '0px 2px 6px rgba(77,168,218,0.08)' }
+    : { shadowColor: '#4DA8DA', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 6, elevation: 2 },
+  md: Platform.OS === 'web'
+    ? { boxShadow: '0px 4px 14px rgba(77,168,218,0.14)' }
+    : { shadowColor: '#4DA8DA', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.14, shadowRadius: 14, elevation: 5 },
+  lg: Platform.OS === 'web'
+    ? { boxShadow: '0px 8px 24px rgba(46,134,181,0.18)' }
+    : { shadowColor: '#2E86B5', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.18, shadowRadius: 24, elevation: 10 },
 };
 
 export const BOTTOM_NAV_HEIGHT = 68;
 export const HEADER_HEIGHT = 56;
 export const STATUS_BAR_HEIGHT = 44;
 export const MIN_TOUCH_TARGET = 44;
+
+// ── Unified Icon Container ────────────────────────────────────────────────────
+// One icon background style, one icon size system, used across the entire app.
+export const IconBox = {
+  bg: '#F1F5F9',
+  size: 44,
+  sizeSmall: 36,
+  sizeLarge: 52,
+  radius: 999,
+  shadow: Platform.OS === 'web'
+    ? { boxShadow: '0px 1px 4px rgba(0,0,0,0.07)' }
+    : { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.07, shadowRadius: 4, elevation: 2 },
+} as const;
+
+// Icon color palette — matches Quick Actions reference
+export const IconColors = {
+  checkIn:       '#34D399',
+  leave:         '#FBBF24',
+  expense:       '#4DA8DA',
+  directory:     '#56CCF2',
+  payroll:       '#F87171',
+  chat:          '#2E86B5',
+  addLead:       '#34D399',
+  announcements: '#FF4D6D',
+  tasks:         '#4DA8DA',
+  projects:      '#2E86B5',
+  profile:       '#56CCF2',
+  settings:      '#78AECF',
+  notifications: '#F87171',
+} as const;

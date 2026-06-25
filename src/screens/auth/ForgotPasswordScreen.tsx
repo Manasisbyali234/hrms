@@ -23,7 +23,7 @@ export default function ForgotPasswordScreen() {
       <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={24} color={Colors.gray900} />
+          <View><Ionicons name="arrow-back" size={24} color={Colors.gray900} /></View>
         </TouchableOpacity>
       </View>
 
@@ -31,12 +31,10 @@ export default function ForgotPasswordScreen() {
         {!sent ? (
           <>
             <View style={styles.iconBox}>
-              <Ionicons name="key-outline" size={48} color={Colors.primary} />
+              <View><Ionicons name="key-outline" size={48} color={Colors.primary} /></View>
             </View>
-            <Text style={styles.title}>Forgot Password?</Text>
-            <Text style={styles.subtitle}>
-              No worries! Enter your registered work email and we'll send you a reset link.
-            </Text>
+            <Text style={styles.title}>{'Forgot Password?'}</Text>
+            <Text style={styles.subtitle}>{"No worries! Enter your registered work email and we'll send you a reset link."}</Text>
             <Input
               label="Work Email" value={email} onChangeText={setEmail}
               placeholder="you@metromindz.com" keyboardType="email-address"
@@ -44,18 +42,18 @@ export default function ForgotPasswordScreen() {
             />
             <Button title="Send Reset Link" onPress={handleSend} loading={loading} size="lg" fullWidth style={{ marginTop: 8 }} />
             <TouchableOpacity onPress={() => router.back()} style={styles.backLink}>
-              <Ionicons name="arrow-back" size={14} color={Colors.primary} />
-              <Text style={styles.backLinkText}> Back to Sign In</Text>
+              <View><Ionicons name="arrow-back" size={14} color={Colors.primary} /></View>
+              <Text style={styles.backLinkText}>{'Back to Sign In'}</Text>
             </TouchableOpacity>
           </>
         ) : (
           <>
             <View style={styles.iconBox}>
-              <Ionicons name="mail-open-outline" size={48} color={Colors.success} />
+              <View><Ionicons name="mail-open-outline" size={48} color={Colors.success} /></View>
             </View>
-            <Text style={styles.title}>Check your email!</Text>
+            <Text style={styles.title}>{'Check your email!'}</Text>
             <Text style={styles.subtitle}>
-              We sent a password reset link to{'\n'}
+              {'We sent a password reset link to\n'}
               <Text style={styles.emailText}>{email}</Text>
             </Text>
             <View style={styles.steps}>
@@ -69,7 +67,7 @@ export default function ForgotPasswordScreen() {
             <Button title="Open Email App" onPress={() => {}} size="lg" fullWidth style={{ marginBottom: 12 }} />
             <Button title="Back to Sign In" onPress={() => router.replace('/auth/login')} variant="outline" size="lg" fullWidth />
             <TouchableOpacity style={styles.resend} onPress={() => setSent(false)}>
-              <Text style={styles.resendText}>Didn't receive it? Try again</Text>
+              <Text style={styles.resendText}>{"Didn't receive it? Try again"}</Text>
             </TouchableOpacity>
           </>
         )}
@@ -92,7 +90,7 @@ const styles = StyleSheet.create({
   stepNum: { width: 28, height: 28, borderRadius: 14, backgroundColor: Colors.overlayLight, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
   stepNumText: { fontSize: Typography.fontSize.sm, fontWeight: '700', color: Colors.primary },
   stepText: { flex: 1, fontSize: Typography.fontSize.base, color: Colors.gray700 },
-  backLink: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 20 },
+  backLink: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 20 },
   backLinkText: { fontSize: Typography.fontSize.sm, color: Colors.primary, fontWeight: '600' },
   resend: { alignItems: 'center', marginTop: 16 },
   resendText: { fontSize: Typography.fontSize.sm, color: Colors.gray500 },
